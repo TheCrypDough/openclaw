@@ -1,0 +1,6 @@
+# AUTOPLACEHOLDER_ANNOTATION: vendor/a2ui/renderers/lit/.npmrc
+# Purpose: File in vendor area for project orchestration/configuration/data.
+# Area: Vendored third-party code/assets (e.g., bundled UI runtime)
+# System effect: Change can influence vendored third-party code/assets (e.g., bundled ui runtime) and therefore affects build/runtime behavior indirectly.
+@a2ui:registry=https://us-npm.pkg.dev/oss-exit-gate-prod/a2ui--npm/
+//us-npm.pkg.dev/oss-exit-gate-prod/a2ui--npm/:always-auth=true

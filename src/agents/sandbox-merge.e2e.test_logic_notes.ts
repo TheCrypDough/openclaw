@@ -1,0 +1,145 @@
+/*
+ * AUTO ANNOTATION
+ * File: src/agents/sandbox-merge.e2e.test.ts
+ * Purpose: Implements core OpenClaw runtime behavior for core application source (gateway, cli, providers, channels).
+ * Module area: Core application source (gateway, CLI, providers, channels)
+ * System effect: When changed, core execution path for message, session, or provider behavior may change.
+ * Marker: AUTOPLACEHOLDER_ANNOTATION
+ */
+import { beforeAll, describe, expect, it } from "vitest";
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+let resolveSandboxScope: typeof import("./sandbox.js").resolveSandboxScope;
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+let resolveSandboxDockerConfig: typeof import("./sandbox.js").resolveSandboxDockerConfig;
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+let resolveSandboxBrowserConfig: typeof import("./sandbox.js").resolveSandboxBrowserConfig;
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+let resolveSandboxPruneConfig: typeof import("./sandbox.js").resolveSandboxPruneConfig;
+
+describe("sandbox config merges", () => {
+  beforeAll(async () => {
+    ({
+      resolveSandboxScope,
+      resolveSandboxDockerConfig,
+      resolveSandboxBrowserConfig,
+      resolveSandboxPruneConfig,
+    } = await import("./sandbox.js"));
+  });
+
+  it("resolves sandbox scope deterministically", { timeout: 60_000 }, async () => {
+    expect(resolveSandboxScope({})).toBe("agent");
+    expect(resolveSandboxScope({ perSession: true })).toBe("session");
+    expect(resolveSandboxScope({ perSession: false })).toBe("shared");
+    expect(resolveSandboxScope({ perSession: true, scope: "agent" })).toBe("agent");
+  });
+
+  it("merges sandbox docker env and ulimits (agent wins)", async () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const resolved = resolveSandboxDockerConfig({
+      scope: "agent",
+      globalDocker: {
+        env: { LANG: "C.UTF-8", FOO: "1" },
+        ulimits: { nofile: { soft: 10, hard: 20 } },
+      },
+      agentDocker: {
+        env: { FOO: "2", BAR: "3" },
+        ulimits: { nproc: 256 },
+      },
+    });
+
+    expect(resolved.env).toEqual({ LANG: "C.UTF-8", FOO: "2", BAR: "3" });
+    expect(resolved.ulimits).toEqual({
+      nofile: { soft: 10, hard: 20 },
+      nproc: 256,
+    });
+  });
+
+  it("merges sandbox docker binds (global + agent combined)", async () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const resolved = resolveSandboxDockerConfig({
+      scope: "agent",
+      globalDocker: {
+        binds: ["/var/run/docker.sock:/var/run/docker.sock"],
+      },
+      agentDocker: {
+        binds: ["/home/user/source:/source:rw"],
+      },
+    });
+
+    expect(resolved.binds).toEqual([
+      "/var/run/docker.sock:/var/run/docker.sock",
+      "/home/user/source:/source:rw",
+    ]);
+  });
+
+  it("returns undefined binds when neither global nor agent has binds", async () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const resolved = resolveSandboxDockerConfig({
+      scope: "agent",
+      globalDocker: {},
+      agentDocker: {},
+    });
+
+    expect(resolved.binds).toBeUndefined();
+  });
+
+  it("ignores agent binds under shared scope", async () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const resolved = resolveSandboxDockerConfig({
+      scope: "shared",
+      globalDocker: {
+        binds: ["/var/run/docker.sock:/var/run/docker.sock"],
+      },
+      agentDocker: {
+        binds: ["/home/user/source:/source:rw"],
+      },
+    });
+
+    expect(resolved.binds).toEqual(["/var/run/docker.sock:/var/run/docker.sock"]);
+  });
+
+  it("ignores agent docker overrides under shared scope", async () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const resolved = resolveSandboxDockerConfig({
+      scope: "shared",
+      globalDocker: { image: "global" },
+      agentDocker: { image: "agent" },
+    });
+
+    expect(resolved.image).toBe("global");
+  });
+
+  it("applies per-agent browser and prune overrides (ignored under shared scope)", async () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const browser = resolveSandboxBrowserConfig({
+      scope: "agent",
+      globalBrowser: { enabled: false, headless: false, enableNoVnc: true },
+      agentBrowser: { enabled: true, headless: true, enableNoVnc: false },
+    });
+    expect(browser.enabled).toBe(true);
+    expect(browser.headless).toBe(true);
+    expect(browser.enableNoVnc).toBe(false);
+
+    const prune = resolveSandboxPruneConfig({
+      scope: "agent",
+      globalPrune: { idleHours: 24, maxAgeDays: 7 },
+      agentPrune: { idleHours: 0, maxAgeDays: 1 },
+    });
+    expect(prune).toEqual({ idleHours: 0, maxAgeDays: 1 });
+
+    const browserShared = resolveSandboxBrowserConfig({
+      scope: "shared",
+      globalBrowser: { enabled: false },
+      agentBrowser: { enabled: true },
+    });
+    expect(browserShared.enabled).toBe(false);
+
+    const pruneShared = resolveSandboxPruneConfig({
+      scope: "shared",
+      globalPrune: { idleHours: 24, maxAgeDays: 7 },
+      agentPrune: { idleHours: 0, maxAgeDays: 1 },
+    });
+    expect(pruneShared).toEqual({ idleHours: 24, maxAgeDays: 7 });
+  });
+});

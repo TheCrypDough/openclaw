@@ -1,0 +1,21 @@
+# AUTOPLACEHOLDER_ANNOTATION: apps/ios/Signing.xcconfig
+# Purpose: File in apps area for project orchestration/configuration/data.
+# Area: Native apps (macOS / iOS / Android / shared app assets)
+# System effect: Change can influence native apps (macos / ios / android / shared app assets) and therefore affects build/runtime behavior indirectly.
+// Default signing values for shared/repo builds.
+// Auto-selected local team overrides live in .local-signing.xcconfig (git-ignored).
+// Manual local overrides can go in LocalSigning.xcconfig (git-ignored).
+
+OPENCLAW_CODE_SIGN_STYLE = Manual
+OPENCLAW_DEVELOPMENT_TEAM = Y5PE65HELJ
+
+OPENCLAW_APP_BUNDLE_ID = ai.openclaw.ios
+OPENCLAW_SHARE_BUNDLE_ID = ai.openclaw.ios.share
+
+OPENCLAW_APP_PROFILE = ai.openclaw.ios Development
+OPENCLAW_SHARE_PROFILE = ai.openclaw.ios.share Development
+
+// Keep local includes after defaults: xcconfig is evaluated top-to-bottom,
+// so later assignments in local files override the defaults above.
+#include? ".local-signing.xcconfig"
+#include? "LocalSigning.xcconfig"

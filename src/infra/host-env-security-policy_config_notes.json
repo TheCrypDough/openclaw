@@ -1,0 +1,23 @@
+# AUTOPLACEHOLDER_ANNOTATION: src/infra/host-env-security-policy.json
+# Purpose: Implements core OpenClaw runtime behavior for core application source (gateway, cli, providers, channels).
+# Area: Core application source (gateway, CLI, providers, channels)
+# System effect: When changed, core execution path for message, session, or provider behavior may change.
+{
+  "blockedKeys": [
+    "NODE_OPTIONS",
+    "NODE_PATH",
+    "PYTHONHOME",
+    "PYTHONPATH",
+    "PERL5LIB",
+    "PERL5OPT",
+    "RUBYLIB",
+    "RUBYOPT",
+    "BASH_ENV",
+    "ENV",
+    "SHELL",
+    "GCONV_PATH",
+    "IFS",
+    "SSLKEYLOGFILE"
+  ],
+  "blockedPrefixes": ["DYLD_", "LD_", "BASH_FUNC_"]
+}

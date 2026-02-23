@@ -1,0 +1,10 @@
+# AUTOPLACEHOLDER_ANNOTATION: apps/ios/WatchApp/Assets.xcassets/Contents.json
+# Purpose: File in apps area for project orchestration/configuration/data.
+# Area: Native apps (macOS / iOS / Android / shared app assets)
+# System effect: Change can influence native apps (macos / ios / android / shared app assets) and therefore affects build/runtime behavior indirectly.
+{
+  "info": {
+    "version": 1,
+    "author": "xcode"
+  }
+}

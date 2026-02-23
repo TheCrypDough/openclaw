@@ -1,0 +1,22 @@
+# AUTOPLACEHOLDER_ANNOTATION: extensions/memory-core/package.json
+# Purpose: Extension package component that adds a channel/tool integration or adapter.
+# Area: Pluggable channel and service extensions
+# System effect: Alters gateway ecosystem integration points and feature surface exposed through plugin loading.
+{
+  "name": "@openclaw/memory-core",
+  "version": "2026.2.22",
+  "private": true,
+  "description": "OpenClaw core memory search plugin",
+  "type": "module",
+  "devDependencies": {
+    "openclaw": "workspace:*"
+  },
+  "peerDependencies": {
+    "openclaw": ">=2026.1.26"
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}

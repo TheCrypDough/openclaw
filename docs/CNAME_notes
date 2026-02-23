@@ -1,0 +1,5 @@
+# AUTOPLACEHOLDER_ANNOTATION: docs/CNAME
+# Purpose: Document file describing configuration/behavior for OpenClaw area user and developer documentation source used for docs site.
+# Area: User and developer documentation source used for docs site
+# System effect: Documentation directly affects operator understanding and onboarding/developer guidance, not runtime directly.
+docs.openclaw.ai

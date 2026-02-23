@@ -1,0 +1,30 @@
+# AUTOPLACEHOLDER_ANNOTATION: vendor/a2ui/specification/0.9/eval/.gitignore
+# Purpose: File in vendor area for project orchestration/configuration/data.
+# Area: Vendored third-party code/assets (e.g., bundled UI runtime)
+# System effect: Change can influence vendored third-party code/assets (e.g., bundled ui runtime) and therefore affects build/runtime behavior indirectly.
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+/results
+
+# production
+/build
+lib/
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.genkit

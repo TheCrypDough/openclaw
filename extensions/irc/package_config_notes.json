@@ -1,0 +1,18 @@
+# AUTOPLACEHOLDER_ANNOTATION: extensions/irc/package.json
+# Purpose: Extension package component that adds a channel/tool integration or adapter.
+# Area: Pluggable channel and service extensions
+# System effect: Alters gateway ecosystem integration points and feature surface exposed through plugin loading.
+{
+  "name": "@openclaw/irc",
+  "version": "2026.2.22",
+  "description": "OpenClaw IRC channel plugin",
+  "type": "module",
+  "devDependencies": {
+    "openclaw": "workspace:*"
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}

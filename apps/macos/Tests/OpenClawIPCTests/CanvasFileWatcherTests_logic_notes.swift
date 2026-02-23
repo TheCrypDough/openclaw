@@ -1,0 +1,96 @@
+/*
+ * AUTO ANNOTATION
+ * File: apps/macos/Tests/OpenClawIPCTests/CanvasFileWatcherTests.swift
+ * Purpose: File in apps area for project orchestration/configuration/data.
+ * Module area: Native apps (macOS / iOS / Android / shared app assets)
+ * System effect: Change can influence native apps (macos / ios / android / shared app assets) and therefore affects build/runtime behavior indirectly.
+ * Marker: AUTOPLACEHOLDER_ANNOTATION
+ */
+import Foundation
+import os
+import Testing
+@testable import OpenClaw
+
+@Suite(.serialized) struct CanvasFileWatcherTests {
+    private func makeTempDir() throws -> URL {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let base = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let dir = base.appendingPathComponent("openclaw-canvaswatch-\(UUID().uuidString)", isDirectory: true)
+        try FileManager().createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }
+
+    @Test func detectsInPlaceFileWrites() async throws {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let dir = try self.makeTempDir()
+        defer { try? FileManager().removeItem(at: dir) }
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let file = dir.appendingPathComponent("index.html")
+        try "hello".write(to: file, atomically: false, encoding: .utf8)
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let fired = OSAllocatedUnfairLock(initialState: false)
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let waitState = OSAllocatedUnfairLock<(fired: Bool, cont: CheckedContinuation<Void, Never>?)>(
+            initialState: (false, nil))
+
+        func waitForFire(timeoutNs: UInt64) async -> Bool {
+            await withTaskGroup(of: Bool.self) { group in
+                group.addTask {
+                    await withCheckedContinuation { cont in
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+                        let resumeImmediately = waitState.withLock { state in
+                            if state.fired { return true }
+                            state.cont = cont
+                            return false
+                        }
+                        if resumeImmediately {
+                            cont.resume()
+                        }
+                    }
+                    return true
+                }
+
+                group.addTask {
+                    try? await Task.sleep(nanoseconds: timeoutNs)
+                    return false
+                }
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+                let result = await group.next() ?? false
+                group.cancelAll()
+                return result
+            }
+        }
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let watcher = CanvasFileWatcher(url: dir) {
+            fired.withLock { $0 = true }
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+            let cont = waitState.withLock { state in
+                state.fired = true
+                let cont = state.cont
+                state.cont = nil
+                return cont
+            }
+            cont?.resume()
+        }
+        watcher.start()
+        defer { watcher.stop() }
+
+        // Give the stream a moment to start.
+        try await Task.sleep(nanoseconds: 150 * 1_000_000)
+
+        // Modify the file in-place (no rename). This used to be missed when only watching the directory vnode.
+        let handle = try FileHandle(forUpdating: file)
+        try handle.seekToEnd()
+        try handle.write(contentsOf: Data(" world".utf8))
+        try handle.close()
+
+        let ok = await waitForFire(timeoutNs: 2_000_000_000)
+        #expect(ok == true)
+        #expect(fired.withLock { $0 } == true)
+    }
+}

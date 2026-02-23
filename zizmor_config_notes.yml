@@ -1,0 +1,21 @@
+# AUTOPLACEHOLDER_ANNOTATION: zizmor.yml
+# Purpose: File in zizmor.yml area for project orchestration/configuration/data.
+# Area: A repository component with localized responsibility
+# System effect: Change can influence a repository component with localized responsibility and therefore affects build/runtime behavior indirectly.
+# zizmor configuration
+# https://docs.zizmor.sh/configuration/
+
+rules:
+  # Disable unpinned-uses - pinning to SHA hashes is a significant change
+  # that should be done deliberately, not enforced by pre-commit
+  unpinned-uses:
+    disable: true
+
+  # Disable excessive-permissions for now - adding explicit permissions
+  # blocks requires careful review of each workflow's needs
+  excessive-permissions:
+    disable: true
+
+  # Disable artipacked (persist-credentials) - low confidence finding
+  artipacked:
+    disable: true

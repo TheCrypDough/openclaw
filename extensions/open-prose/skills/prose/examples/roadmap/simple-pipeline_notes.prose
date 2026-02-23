@@ -1,0 +1,21 @@
+# AUTOPLACEHOLDER_ANNOTATION: extensions/open-prose/skills/prose/examples/roadmap/simple-pipeline.prose
+# Purpose: Extension package component that adds a channel/tool integration or adapter.
+# Area: Pluggable channel and service extensions
+# System effect: Alters gateway ecosystem integration points and feature surface exposed through plugin loading.
+# Simple Pipeline Example
+# Research a topic, then write an article
+
+import "web-search" from "github:example/web-search"
+
+agent researcher:
+  model: sonnet
+  skills: ["web-search"]
+
+agent writer:
+  model: opus
+
+session research: researcher
+  prompt: "Research the latest developments in quantum computing"
+
+-> session article: writer
+  prompt: "Write a blog post about quantum computing"

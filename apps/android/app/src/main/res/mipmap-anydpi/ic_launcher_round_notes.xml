@@ -1,0 +1,12 @@
+<!-- AUTOPLACEHOLDER_ANNOTATION -->
+<annotation path="apps/android/app/src/main/res/mipmap-anydpi/ic_launcher_round.xml">
+  <purpose>File in apps area for project orchestration/configuration/data.</purpose>
+  <area>Native apps (macOS / iOS / Android / shared app assets)</area>
+  <impact>Change can influence native apps (macos / ios / android / shared app assets) and therefore affects build/runtime behavior indirectly.</impact>
+</annotation>
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+    <monochrome android:drawable="@mipmap/ic_launcher_foreground" />
+</adaptive-icon>

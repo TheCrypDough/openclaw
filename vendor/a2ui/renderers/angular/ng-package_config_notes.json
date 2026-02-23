@@ -1,0 +1,12 @@
+# AUTOPLACEHOLDER_ANNOTATION: vendor/a2ui/renderers/angular/ng-package.json
+# Purpose: File in vendor area for project orchestration/configuration/data.
+# Area: Vendored third-party code/assets (e.g., bundled UI runtime)
+# System effect: Change can influence vendored third-party code/assets (e.g., bundled ui runtime) and therefore affects build/runtime behavior indirectly.
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "./dist",
+  "lib": {
+    "entryFile": "src/public-api.ts"
+  },
+  "allowedNonPeerDependencies": ["markdown-it", "@a2ui/lit"]
+}

@@ -1,0 +1,18 @@
+# AUTOPLACEHOLDER_ANNOTATION: scripts/systemd/openclaw-auth-monitor.service
+# Purpose: Operational script for maintenance/build/release/test workflows (openclaw-auth-monitor.service).
+# Area: Repo utility, build, release, and maintenance scripts
+# System effect: Used by developers/CI to automate setup, checks, packaging, and diagnostics.
+[Unit]
+Description=OpenClaw Auth Expiry Monitor
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/home/admin/openclaw/scripts/auth-monitor.sh
+# Configure notification channels via environment
+Environment=WARN_HOURS=2
+# Environment=NOTIFY_PHONE=+1234567890
+# Environment=NOTIFY_NTFY=openclaw-alerts
+
+[Install]
+WantedBy=default.target

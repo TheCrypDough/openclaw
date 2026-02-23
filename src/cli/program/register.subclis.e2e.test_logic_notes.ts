@@ -1,0 +1,116 @@
+/*
+ * AUTO ANNOTATION
+ * File: src/cli/program/register.subclis.e2e.test.ts
+ * Purpose: Implements core OpenClaw runtime behavior for core application source (gateway, cli, providers, channels).
+ * Module area: Core application source (gateway, CLI, providers, channels)
+ * System effect: When changed, core execution path for message, session, or provider behavior may change.
+ * Marker: AUTOPLACEHOLDER_ANNOTATION
+ */
+import { Command } from "commander";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+const { acpAction, registerAcpCli } = vi.hoisted(() => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const action = vi.fn();
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const register = vi.fn((program: Command) => {
+    program.command("acp").action(action);
+  });
+  return { acpAction: action, registerAcpCli: register };
+});
+
+const { nodesAction, registerNodesCli } = vi.hoisted(() => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const action = vi.fn();
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const register = vi.fn((program: Command) => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const nodes = program.command("nodes");
+    nodes.command("list").action(action);
+  });
+  return { nodesAction: action, registerNodesCli: register };
+});
+
+vi.mock("../acp-cli.js", () => ({ registerAcpCli }));
+vi.mock("../nodes-cli.js", () => ({ registerNodesCli }));
+
+const { registerSubCliByName, registerSubCliCommands } = await import("./register.subclis.js");
+
+describe("registerSubCliCommands", () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const originalArgv = process.argv;
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const originalEnv = { ...process.env };
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const createRegisteredProgram = (argv: string[], name?: string) => {
+    process.argv = argv;
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const program = new Command();
+    if (name) {
+      program.name(name);
+    }
+    registerSubCliCommands(program, process.argv);
+    return program;
+  };
+
+  beforeEach(() => {
+    process.env = { ...originalEnv };
+    delete process.env.OPENCLAW_DISABLE_LAZY_SUBCOMMANDS;
+    registerAcpCli.mockClear();
+    acpAction.mockClear();
+    registerNodesCli.mockClear();
+    nodesAction.mockClear();
+  });
+
+  afterEach(() => {
+    process.argv = originalArgv;
+    process.env = { ...originalEnv };
+  });
+
+  it("registers only the primary placeholder and dispatches", async () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const program = createRegisteredProgram(["node", "openclaw", "acp"]);
+
+    expect(program.commands.map((cmd) => cmd.name())).toEqual(["acp"]);
+
+    await program.parseAsync(process.argv);
+
+    expect(registerAcpCli).toHaveBeenCalledTimes(1);
+    expect(acpAction).toHaveBeenCalledTimes(1);
+  });
+
+  it("registers placeholders for all subcommands when no primary", () => {
+    const program = createRegisteredProgram(["node", "openclaw"]);
+
+    const names = program.commands.map((cmd) => cmd.name());
+    expect(names).toContain("acp");
+    expect(names).toContain("gateway");
+    expect(names).toContain("clawbot");
+    expect(registerAcpCli).not.toHaveBeenCalled();
+  });
+
+  it("re-parses argv for lazy subcommands", async () => {
+    const program = createRegisteredProgram(["node", "openclaw", "nodes", "list"], "openclaw");
+
+    expect(program.commands.map((cmd) => cmd.name())).toEqual(["nodes"]);
+
+    await program.parseAsync(["nodes", "list"], { from: "user" });
+
+    expect(registerNodesCli).toHaveBeenCalledTimes(1);
+    expect(nodesAction).toHaveBeenCalledTimes(1);
+  });
+
+  it("replaces placeholder when registering a subcommand by name", async () => {
+    const program = createRegisteredProgram(["node", "openclaw", "acp", "--help"], "openclaw");
+
+    await registerSubCliByName(program, "acp");
+
+    const names = program.commands.map((cmd) => cmd.name());
+    expect(names.filter((name) => name === "acp")).toHaveLength(1);
+
+    await program.parseAsync(["node", "openclaw", "acp"], { from: "user" });
+    expect(registerAcpCli).toHaveBeenCalledTimes(1);
+    expect(acpAction).toHaveBeenCalledTimes(1);
+  });
+});

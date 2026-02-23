@@ -1,0 +1,12 @@
+# AUTOPLACEHOLDER_ANNOTATION: Swabble/.swiftformat
+# Purpose: File in Swabble area for project orchestration/configuration/data.
+# Area: Swift package subtree for related mobile tooling
+# System effect: Change can influence swift package subtree for related mobile tooling and therefore affects build/runtime behavior indirectly.
+--swiftversion 6.2
+--indent 4
+--maxwidth 120
+--wraparguments before-first
+--wrapcollections before-first
+--stripunusedargs closure-only
+--self remove
+--header ""

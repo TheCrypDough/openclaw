@@ -1,0 +1,20 @@
+# AUTOPLACEHOLDER_ANNOTATION: vendor/a2ui/.gitignore
+# Purpose: File in vendor area for project orchestration/configuration/data.
+# Area: Vendored third-party code/assets (e.g., bundled UI runtime)
+# System effect: Change can influence vendored third-party code/assets (e.g., bundled ui runtime) and therefore affects build/runtime behavior indirectly.
+node_modules
+.DS_Store
+.wireit
+dist
+.env
+.idx
+.vscode
+__pycache__
+*.pyc
+.angular
+
+# MkDocs build output
+site/
+
+# Python virtual environment
+.venv/

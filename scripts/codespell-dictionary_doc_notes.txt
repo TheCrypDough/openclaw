@@ -1,0 +1,8 @@
+<!-- AUTOPLACEHOLDER_ANNOTATION -->
+## File Annotation: scripts/codespell-dictionary.txt
+- **Purpose:** Operational script for maintenance/build/release/test workflows (codespell-dictionary.txt).
+- **Module area:** Repo utility, build, release, and maintenance scripts
+- **System effect:** Used by developers/CI to automate setup, checks, packaging, and diagnostics.
+messagesNcontentXtooluseinput->messages.content.tool_use.input
+groupsthreads->groups/threads
+startstoprestart->start/stop/restart

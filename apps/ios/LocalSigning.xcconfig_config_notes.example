@@ -1,0 +1,18 @@
+# AUTOPLACEHOLDER_ANNOTATION: apps/ios/LocalSigning.xcconfig.example
+# Purpose: File in apps area for project orchestration/configuration/data.
+# Area: Native apps (macOS / iOS / Android / shared app assets)
+# System effect: Change can influence native apps (macos / ios / android / shared app assets) and therefore affects build/runtime behavior indirectly.
+// Copy to LocalSigning.xcconfig for personal local signing overrides.
+// This file is only an example and should stay committed.
+
+OPENCLAW_CODE_SIGN_STYLE = Automatic
+OPENCLAW_DEVELOPMENT_TEAM = P5Z8X89DJL
+
+OPENCLAW_APP_BUNDLE_ID = ai.openclaw.ios.test.mariano
+OPENCLAW_SHARE_BUNDLE_ID = ai.openclaw.ios.test.mariano.share
+OPENCLAW_WATCH_APP_BUNDLE_ID = ai.openclaw.ios.test.mariano.watchkitapp
+OPENCLAW_WATCH_EXTENSION_BUNDLE_ID = ai.openclaw.ios.test.mariano.watchkitapp.extension
+
+// Leave empty with automatic signing.
+OPENCLAW_APP_PROFILE =
+OPENCLAW_SHARE_PROFILE =

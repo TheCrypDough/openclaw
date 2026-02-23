@@ -1,0 +1,19 @@
+# AUTOPLACEHOLDER_ANNOTATION: tsconfig.plugin-sdk.dts.json
+# Purpose: File in tsconfig.plugin-sdk.dts.json area for project orchestration/configuration/data.
+# Area: A repository component with localized responsibility
+# System effect: Change can influence a repository component with localized responsibility and therefore affects build/runtime behavior indirectly.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": false,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "noEmitOnError": true,
+    "outDir": "dist/plugin-sdk",
+    "rootDir": "src",
+    "tsBuildInfoFile": "dist/plugin-sdk/.tsbuildinfo"
+  },
+  "include": ["src/plugin-sdk/index.ts", "src/plugin-sdk/account-id.ts", "src/types/**/*.d.ts"],
+  "exclude": ["node_modules", "dist", "src/**/*.test.ts"]
+}

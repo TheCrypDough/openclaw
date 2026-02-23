@@ -1,0 +1,5 @@
+# AUTOPLACEHOLDER_ANNOTATION: .github/FUNDING.yml
+# Purpose: File in .github area for project orchestration/configuration/data.
+# Area: CI, PR/issue workflows, automation, labels, and templates
+# System effect: Change can influence ci, pr/issue workflows, automation, labels, and templates and therefore affects build/runtime behavior indirectly.
+custom: ["https://github.com/sponsors/steipete"]

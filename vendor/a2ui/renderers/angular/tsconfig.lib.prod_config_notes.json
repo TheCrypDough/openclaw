@@ -1,0 +1,13 @@
+# AUTOPLACEHOLDER_ANNOTATION: vendor/a2ui/renderers/angular/tsconfig.lib.prod.json
+# Purpose: File in vendor area for project orchestration/configuration/data.
+# Area: Vendored third-party code/assets (e.g., bundled UI runtime)
+# System effect: Change can influence vendored third-party code/assets (e.g., bundled ui runtime) and therefore affects build/runtime behavior indirectly.
+{
+  "extends": "./tsconfig.lib.json",
+  "compilerOptions": {
+    "declarationMap": false
+  },
+  "angularCompilerOptions": {
+    "compilationMode": "partial"
+  }
+}

@@ -1,0 +1,22 @@
+# AUTOPLACEHOLDER_ANNOTATION: extensions/open-prose/skills/prose/examples/roadmap/parallel-review.prose
+# Purpose: Extension package component that adds a channel/tool integration or adapter.
+# Area: Pluggable channel and service extensions
+# System effect: Alters gateway ecosystem integration points and feature surface exposed through plugin loading.
+# Parallel Review Example
+# Three reviewers analyze code in parallel, then synthesize
+
+agent reviewer:
+  model: sonnet
+
+parallel:
+  security = session: reviewer
+    prompt: "Review this code for security issues"
+  performance = session: reviewer
+    prompt: "Review this code for performance issues"
+  style = session: reviewer
+    prompt: "Review this code for style and readability"
+
+session synthesizer:
+  model: opus
+  prompt: "Synthesize the reviews into a unified report"
+  context: { security, performance, style }

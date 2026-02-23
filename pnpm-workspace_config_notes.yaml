@@ -1,0 +1,20 @@
+# AUTOPLACEHOLDER_ANNOTATION: pnpm-workspace.yaml
+# Purpose: File in pnpm-workspace.yaml area for project orchestration/configuration/data.
+# Area: A repository component with localized responsibility
+# System effect: Change can influence a repository component with localized responsibility and therefore affects build/runtime behavior indirectly.
+packages:
+  - .
+  - ui
+  - packages/*
+  - extensions/*
+
+onlyBuiltDependencies:
+  - "@lydell/node-pty"
+  - "@matrix-org/matrix-sdk-crypto-nodejs"
+  - "@napi-rs/canvas"
+  - "@whiskeysockets/baileys"
+  - authenticate-pam
+  - esbuild
+  - node-llama-cpp
+  - protobufjs
+  - sharp

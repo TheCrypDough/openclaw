@@ -1,0 +1,16 @@
+# AUTOPLACEHOLDER_ANNOTATION: extensions/llm-task/package.json
+# Purpose: Extension package component that adds a channel/tool integration or adapter.
+# Area: Pluggable channel and service extensions
+# System effect: Alters gateway ecosystem integration points and feature surface exposed through plugin loading.
+{
+  "name": "@openclaw/llm-task",
+  "version": "2026.2.22",
+  "private": true,
+  "description": "OpenClaw JSON-only LLM task plugin",
+  "type": "module",
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}

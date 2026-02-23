@@ -1,0 +1,108 @@
+/*
+ * AUTO ANNOTATION
+ * File: apps/ios/Tests/VoiceWakeManagerExtractCommandTests.swift
+ * Purpose: File in apps area for project orchestration/configuration/data.
+ * Module area: Native apps (macOS / iOS / Android / shared app assets)
+ * System effect: Change can influence native apps (macos / ios / android / shared app assets) and therefore affects build/runtime behavior indirectly.
+ * Marker: AUTOPLACEHOLDER_ANNOTATION
+ */
+import Foundation
+import SwabbleKit
+import Testing
+@testable import OpenClaw
+
+@Suite struct VoiceWakeManagerExtractCommandTests {
+    @Test func extractCommandReturnsNilWhenNoTriggerFound() {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let transcript = "hello world"
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let segments = makeSegments(
+            transcript: transcript,
+            words: [("hello", 0.0, 0.1), ("world", 0.2, 0.1)])
+        #expect(VoiceWakeManager.extractCommand(from: transcript, segments: segments, triggers: ["openclaw"]) == nil)
+    }
+
+    @Test func extractCommandTrimsTokensAndResult() {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let transcript = "hey openclaw do thing"
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let segments = makeSegments(
+            transcript: transcript,
+            words: [
+                ("hey", 0.0, 0.1),
+                ("openclaw", 0.2, 0.1),
+                ("do", 0.9, 0.1),
+                ("thing", 1.1, 0.1),
+            ])
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let cmd = VoiceWakeManager.extractCommand(
+            from: transcript,
+            segments: segments,
+            triggers: ["  openclaw  "],
+            minPostTriggerGap: 0.3)
+        #expect(cmd == "do thing")
+    }
+
+    @Test func extractCommandReturnsNilWhenGapTooShort() {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let transcript = "hey openclaw do thing"
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let segments = makeSegments(
+            transcript: transcript,
+            words: [
+                ("hey", 0.0, 0.1),
+                ("openclaw", 0.2, 0.1),
+                ("do", 0.35, 0.1),
+                ("thing", 0.5, 0.1),
+            ])
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let cmd = VoiceWakeManager.extractCommand(
+            from: transcript,
+            segments: segments,
+            triggers: ["openclaw"],
+            minPostTriggerGap: 0.3)
+        #expect(cmd == nil)
+    }
+
+    @Test func extractCommandReturnsNilWhenNothingAfterTrigger() {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let transcript = "hey openclaw"
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        let segments = makeSegments(
+            transcript: transcript,
+            words: [("hey", 0.0, 0.1), ("openclaw", 0.2, 0.1)])
+        #expect(VoiceWakeManager.extractCommand(from: transcript, segments: segments, triggers: ["openclaw"]) == nil)
+    }
+
+    @Test func extractCommandIgnoresEmptyTriggers() {
+        let transcript = "hey openclaw do thing"
+        let segments = makeSegments(
+            transcript: transcript,
+            words: [
+                ("hey", 0.0, 0.1),
+                ("openclaw", 0.2, 0.1),
+                ("do", 0.9, 0.1),
+                ("thing", 1.1, 0.1),
+            ])
+        let cmd = VoiceWakeManager.extractCommand(
+            from: transcript,
+            segments: segments,
+            triggers: ["", "   ", "openclaw"],
+            minPostTriggerGap: 0.3)
+        #expect(cmd == "do thing")
+    }
+}
+
+private func makeSegments(
+    transcript: String,
+    words: [(String, TimeInterval, TimeInterval)])
+-> [WakeWordSegment] {
+    var searchStart = transcript.startIndex
+    var output: [WakeWordSegment] = []
+    for (word, start, duration) in words {
+        let range = transcript.range(of: word, range: searchStart..<transcript.endIndex)
+        output.append(WakeWordSegment(text: word, start: start, duration: duration, range: range))
+        if let range { searchStart = range.upperBound }
+    }
+    return output
+}

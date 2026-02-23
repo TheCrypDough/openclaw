@@ -1,0 +1,14 @@
+<!-- AUTOPLACEHOLDER_ANNOTATION -->
+## File Annotation: scripts/codespell-ignore.txt
+- **Purpose:** Operational script for maintenance/build/release/test workflows (codespell-ignore.txt).
+- **Module area:** Repo utility, build, release, and maintenance scripts
+- **System effect:** Used by developers/CI to automate setup, checks, packaging, and diagnostics.
+iTerm
+FO
+Nam
+Lins
+Vai
+OptionA
+CAF
+overlayed
+re-use

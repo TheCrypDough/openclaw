@@ -1,0 +1,15 @@
+# AUTOPLACEHOLDER_ANNOTATION: extensions/lobster/package.json
+# Purpose: Extension package component that adds a channel/tool integration or adapter.
+# Area: Pluggable channel and service extensions
+# System effect: Alters gateway ecosystem integration points and feature surface exposed through plugin loading.
+{
+  "name": "@openclaw/lobster",
+  "version": "2026.2.22",
+  "description": "Lobster workflow tool plugin (typed pipelines + resumable approvals)",
+  "type": "module",
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}

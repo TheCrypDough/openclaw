@@ -1,0 +1,146 @@
+# Folder Annotation
+
+- **Path:** `src/cli`
+- **Folder role:** Core application source (gateway, CLI, providers, channels)
+- **Contains:** 9 folders, 121 files
+
+## Purpose
+This folder stores components that collectively support the role above.
+
+## System effect
+Changes in this folder influence the runtime behavior of its subsystem and can alter how user requests, integrations, or tooling are processed.
+
+## Contents overview
+### Subfolders
+- shared/
+- update-cli/
+- cron-cli/
+- program/
+- browser-cli-actions-input/
+- daemon-cli/
+- nodes-cli/
+- node-cli/
+- gateway-cli/
+### Files
+- banner.ts
+- docs-cli.ts
+- browser-cli-examples.ts
+- program.force.test.ts
+- program.smoke.e2e.test.ts
+- outbound-send-deps.ts
+- channel-options.ts
+- cli-name.ts
+- gateway-rpc.ts
+- windows-argv.ts
+- program.ts
+- pairing-cli.test.ts
+- devices-cli.test.ts
+- gateway.sigterm.e2e.test.ts
+- progress.ts
+- browser-cli.test.ts
+- argv.test.ts
+- gateway-cli.ts
+- nodes-cli.ts
+- command-format.ts
+- ports.ts
+- route.ts
+- daemon-cli.ts
+- pairing-cli.ts
+- browser-cli-state.ts
+- outbound-send-mapping.ts
+- progress.test.ts
+- prompt.ts
+- browser-cli-state.option-collisions.test.ts
+- daemon-cli-compat.test.ts
+- browser-cli-extension.ts
+- prompt.test.ts
+- qr-cli.ts
+- nodes-cli.coverage.test.ts
+- exec-approvals-cli.test.ts
+- tui-cli.ts
+- channels-cli.ts
+- dns-cli.ts
+- browser-cli-debug.ts
+- daemon-cli-compat.ts
+- run-main.ts
+- browser-cli-resize.ts
+- daemon-cli.coverage.e2e.test.ts
+- browser-cli-extension.test.ts
+- requirements-test-fixtures.ts
+- gateway-cli.coverage.e2e.test.ts
+- system-cli.ts
+- logs-cli.ts
+- memory-cli.ts
+- nodes-canvas.ts
+- channel-auth.ts
+- profile-utils.ts
+- help-format.ts
+- skills-cli.format.ts
+- browser-cli.ts
+- models-cli.ts
+- parse-bytes.ts
+- command-options.ts
+- nodes-run.ts
+- plugins-cli.ts
+- skills-cli.test.ts
+- profile.ts
+- security-cli.ts
+- run-main.exit.test.ts
+- cli-utils.ts
+- models-cli.test.ts
+- nodes-camera.ts
+- nodes-media-utils.test.ts
+- skills-cli.ts
+- test-runtime-capture.ts
+- cron-cli.ts
+- deps.test.ts
+- update-cli.option-collisions.test.ts
+- outbound-send-mapping.test.ts
+- nodes-screen.ts
+- wait.ts
+- system-cli.test.ts
+- hooks-cli.test.ts
+- exec-approvals-cli.ts
+- tagline.ts
+- acp-cli.ts
+- command-options.test.ts
+- deps.ts
+- hooks-cli.ts
+- node-cli.ts
+- browser-cli-actions-observe.ts
+- plugin-registry.ts
+- run-main.test.ts
+- acp-cli.option-collisions.test.ts
+- argv.ts
+- clawbot-cli.ts
+- qr-cli.test.ts
+- devices-cli.ts
+- config-cli.ts
+- cron-cli.test.ts
+- browser-cli-state.cookies-storage.ts
+- parse-timeout.ts
+- browser-cli-manage.ts
+- program.nodes-basic.e2e.test.ts
+- webhooks-cli.ts
+- respawn-policy.ts
+- browser-cli-shared.ts
+- browser-cli-inspect.ts
+- parse-duration.ts
+- memory-cli.test.ts
+- sandbox-cli.ts
+- browser-cli-inspect.test.ts
+- nodes-media-utils.ts
+- skills-cli.e2e.test.ts
+- completion-cli.ts
+- logs-cli.test.ts
+- program.test-mocks.ts
+- update-cli.ts
+- directory-cli.ts
+- cli-utils.test.ts
+- program.nodes-media.e2e.test.ts
+- profile.test.ts
+- nodes-camera.test.ts
+- browser-cli-actions-input.ts
+- update-cli.test.ts
+- config-cli.test.ts
+

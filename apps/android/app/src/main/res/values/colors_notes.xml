@@ -1,0 +1,9 @@
+<!-- AUTOPLACEHOLDER_ANNOTATION -->
+<annotation path="apps/android/app/src/main/res/values/colors.xml">
+  <purpose>File in apps area for project orchestration/configuration/data.</purpose>
+  <area>Native apps (macOS / iOS / Android / shared app assets)</area>
+  <impact>Change can influence native apps (macos / ios / android / shared app assets) and therefore affects build/runtime behavior indirectly.</impact>
+</annotation>
+<resources>
+    <color name="ic_launcher_background">#0A0A0A</color>
+</resources>

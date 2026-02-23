@@ -1,0 +1,218 @@
+# AUTOPLACEHOLDER_ANNOTATION: extensions/voice-call/src/config.test.ts
+# Purpose: Extension package component that adds a channel/tool integration or adapter.
+# Area: Pluggable channel and service extensions
+# System effect: Alters gateway ecosystem integration points and feature surface exposed through plugin loading.
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { validateProviderConfig, resolveVoiceCallConfig, type VoiceCallConfig } from "./config.js";
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+function createBaseConfig(provider: "telnyx" | "twilio" | "plivo" | "mock"): VoiceCallConfig {
+  return {
+    enabled: true,
+    provider,
+    fromNumber: "+15550001234",
+    inboundPolicy: "disabled",
+    allowFrom: [],
+    outbound: { defaultMode: "notify", notifyHangupDelaySec: 3 },
+    maxDurationSeconds: 300,
+    staleCallReaperSeconds: 600,
+    silenceTimeoutMs: 800,
+    transcriptTimeoutMs: 180000,
+    ringTimeoutMs: 30000,
+    maxConcurrentCalls: 1,
+    serve: { port: 3334, bind: "127.0.0.1", path: "/voice/webhook" },
+    tailscale: { mode: "off", path: "/voice/webhook" },
+    tunnel: { provider: "none", allowNgrokFreeTierLoopbackBypass: false },
+    webhookSecurity: {
+      allowedHosts: [],
+      trustForwardingHeaders: false,
+      trustedProxyIPs: [],
+    },
+    streaming: {
+      enabled: false,
+      sttProvider: "openai-realtime",
+      sttModel: "gpt-4o-transcribe",
+      silenceDurationMs: 800,
+      vadThreshold: 0.5,
+      streamPath: "/voice/stream",
+    },
+    skipSignatureVerification: false,
+    stt: { provider: "openai", model: "whisper-1" },
+    tts: {
+      provider: "openai",
+      openai: { model: "gpt-4o-mini-tts", voice: "coral" },
+    },
+    responseModel: "openai/gpt-4o-mini",
+    responseTimeoutMs: 30000,
+  };
+}
+
+describe("validateProviderConfig", () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const originalEnv = { ...process.env };
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const clearProviderEnv = () => {
+    delete process.env.TWILIO_ACCOUNT_SID;
+    delete process.env.TWILIO_AUTH_TOKEN;
+    delete process.env.TELNYX_API_KEY;
+    delete process.env.TELNYX_CONNECTION_ID;
+    delete process.env.TELNYX_PUBLIC_KEY;
+    delete process.env.PLIVO_AUTH_ID;
+    delete process.env.PLIVO_AUTH_TOKEN;
+  };
+
+  beforeEach(() => {
+    clearProviderEnv();
+  });
+
+  afterEach(() => {
+    // Restore original env
+    process.env = { ...originalEnv };
+  });
+
+  describe("provider credential sources", () => {
+    it("passes validation when credentials come from config or environment", () => {
+      for (const provider of ["twilio", "telnyx", "plivo"] as const) {
+        clearProviderEnv();
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        const fromConfig = createBaseConfig(provider);
+        if (provider === "twilio") {
+          fromConfig.twilio = { accountSid: "AC123", authToken: "secret" };
+        } else if (provider === "telnyx") {
+          fromConfig.telnyx = {
+            apiKey: "KEY123",
+            connectionId: "CONN456",
+            publicKey: "public-key",
+          };
+        } else {
+          fromConfig.plivo = { authId: "MA123", authToken: "secret" };
+        }
+        expect(validateProviderConfig(fromConfig)).toMatchObject({ valid: true, errors: [] });
+
+        clearProviderEnv();
+        if (provider === "twilio") {
+          process.env.TWILIO_ACCOUNT_SID = "AC123";
+          process.env.TWILIO_AUTH_TOKEN = "secret";
+        } else if (provider === "telnyx") {
+          process.env.TELNYX_API_KEY = "KEY123";
+          process.env.TELNYX_CONNECTION_ID = "CONN456";
+          process.env.TELNYX_PUBLIC_KEY = "public-key";
+        } else {
+          process.env.PLIVO_AUTH_ID = "MA123";
+          process.env.PLIVO_AUTH_TOKEN = "secret";
+        }
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+        const fromEnv = resolveVoiceCallConfig(createBaseConfig(provider));
+        expect(validateProviderConfig(fromEnv)).toMatchObject({ valid: true, errors: [] });
+      }
+    });
+  });
+
+  describe("twilio provider", () => {
+    it("passes validation with mixed config and env vars", () => {
+      process.env.TWILIO_AUTH_TOKEN = "secret";
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+      let config = createBaseConfig("twilio");
+      config.twilio = { accountSid: "AC123" };
+      config = resolveVoiceCallConfig(config);
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+      const result = validateProviderConfig(config);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it("fails validation when required twilio credentials are missing", () => {
+      process.env.TWILIO_AUTH_TOKEN = "secret";
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+      const missingSid = validateProviderConfig(resolveVoiceCallConfig(createBaseConfig("twilio")));
+      expect(missingSid.valid).toBe(false);
+      expect(missingSid.errors).toContain(
+        "plugins.entries.voice-call.config.twilio.accountSid is required (or set TWILIO_ACCOUNT_SID env)",
+      );
+
+      delete process.env.TWILIO_AUTH_TOKEN;
+      process.env.TWILIO_ACCOUNT_SID = "AC123";
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+      const missingToken = validateProviderConfig(
+        resolveVoiceCallConfig(createBaseConfig("twilio")),
+      );
+      expect(missingToken.valid).toBe(false);
+      expect(missingToken.errors).toContain(
+        "plugins.entries.voice-call.config.twilio.authToken is required (or set TWILIO_AUTH_TOKEN env)",
+      );
+    });
+  });
+
+  describe("telnyx provider", () => {
+    it("fails validation when apiKey is missing everywhere", () => {
+      process.env.TELNYX_CONNECTION_ID = "CONN456";
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+      let config = createBaseConfig("telnyx");
+      config = resolveVoiceCallConfig(config);
+
+      const result = validateProviderConfig(config);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain(
+        "plugins.entries.voice-call.config.telnyx.apiKey is required (or set TELNYX_API_KEY env)",
+      );
+    });
+
+    it("requires a public key unless signature verification is skipped", () => {
+      const missingPublicKey = createBaseConfig("telnyx");
+      missingPublicKey.inboundPolicy = "allowlist";
+      missingPublicKey.telnyx = { apiKey: "KEY123", connectionId: "CONN456" };
+      const missingPublicKeyResult = validateProviderConfig(missingPublicKey);
+      expect(missingPublicKeyResult.valid).toBe(false);
+      expect(missingPublicKeyResult.errors).toContain(
+        "plugins.entries.voice-call.config.telnyx.publicKey is required (or set TELNYX_PUBLIC_KEY env)",
+      );
+
+      const withPublicKey = createBaseConfig("telnyx");
+      withPublicKey.inboundPolicy = "allowlist";
+      withPublicKey.telnyx = {
+        apiKey: "KEY123",
+        connectionId: "CONN456",
+        publicKey: "public-key",
+      };
+      expect(validateProviderConfig(withPublicKey)).toMatchObject({ valid: true, errors: [] });
+
+      const skippedVerification = createBaseConfig("telnyx");
+      skippedVerification.skipSignatureVerification = true;
+      skippedVerification.telnyx = { apiKey: "KEY123", connectionId: "CONN456" };
+      expect(validateProviderConfig(skippedVerification)).toMatchObject({
+        valid: true,
+        errors: [],
+      });
+    });
+  });
+
+  describe("plivo provider", () => {
+    it("fails validation when authId is missing everywhere", () => {
+      process.env.PLIVO_AUTH_TOKEN = "secret";
+      let config = createBaseConfig("plivo");
+      config = resolveVoiceCallConfig(config);
+
+      const result = validateProviderConfig(config);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain(
+        "plugins.entries.voice-call.config.plivo.authId is required (or set PLIVO_AUTH_ID env)",
+      );
+    });
+  });
+
+  describe("disabled config", () => {
+    it("skips validation when enabled is false", () => {
+      const config = createBaseConfig("twilio");
+      config.enabled = false;
+
+      const result = validateProviderConfig(config);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+  });
+});

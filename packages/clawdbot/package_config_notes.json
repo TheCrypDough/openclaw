@@ -1,0 +1,20 @@
+# AUTOPLACEHOLDER_ANNOTATION: packages/clawdbot/package.json
+# Purpose: File in packages area for project orchestration/configuration/data.
+# Area: Supporting runtime packages used by tools/services
+# System effect: Change can influence supporting runtime packages used by tools/services and therefore affects build/runtime behavior indirectly.
+{
+  "name": "clawdbot",
+  "version": "2026.2.12",
+  "description": "Compatibility shim that forwards to openclaw",
+  "bin": {
+    "clawdbot": "./bin/clawdbot.js"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./cli-entry": "./bin/clawdbot.js"
+  },
+  "dependencies": {
+    "openclaw": "workspace:*"
+  }
+}

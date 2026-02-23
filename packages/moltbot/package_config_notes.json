@@ -1,0 +1,20 @@
+# AUTOPLACEHOLDER_ANNOTATION: packages/moltbot/package.json
+# Purpose: File in packages area for project orchestration/configuration/data.
+# Area: Supporting runtime packages used by tools/services
+# System effect: Change can influence supporting runtime packages used by tools/services and therefore affects build/runtime behavior indirectly.
+{
+  "name": "moltbot",
+  "version": "2026.2.12",
+  "description": "Compatibility shim that forwards to openclaw",
+  "bin": {
+    "moltbot": "./bin/moltbot.js"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./cli-entry": "./bin/moltbot.js"
+  },
+  "dependencies": {
+    "openclaw": "workspace:*"
+  }
+}

@@ -1,0 +1,13 @@
+<!-- AUTOPLACEHOLDER_ANNOTATION -->
+<annotation path="apps/android/app/src/main/res/values/themes.xml">
+  <purpose>File in apps area for project orchestration/configuration/data.</purpose>
+  <area>Native apps (macOS / iOS / Android / shared app assets)</area>
+  <impact>Change can influence native apps (macos / ios / android / shared app assets) and therefore affects build/runtime behavior indirectly.</impact>
+</annotation>
+<resources>
+    <style name="Theme.OpenClawNode" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>

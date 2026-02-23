@@ -1,0 +1,6 @@
+# AUTOPLACEHOLDER_ANNOTATION: .pi/git/.gitignore
+# Purpose: File in .pi area for project orchestration/configuration/data.
+# Area: Project-integrated prompt/tooling metadata for extensions
+# System effect: Change can influence project-integrated prompt/tooling metadata for extensions and therefore affects build/runtime behavior indirectly.
+*
+!.gitignore

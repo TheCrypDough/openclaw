@@ -1,0 +1,17 @@
+# AUTOPLACEHOLDER_ANNOTATION: scripts/e2e/Dockerfile.qr-import
+# Purpose: Operational script for maintenance/build/release/test workflows (Dockerfile.qr-import).
+# Area: Repo utility, build, release, and maintenance scripts
+# System effect: Used by developers/CI to automate setup, checks, packaging, and diagnostics.
+FROM node:22-bookworm@sha256:cd7bcd2e7a1e6f72052feb023c7f6b722205d3fcab7bbcbd2d1bfdab10b1e935
+
+RUN corepack enable
+
+WORKDIR /app
+
+COPY . .
+
+RUN pnpm install --frozen-lockfile
+
+RUN useradd --create-home --shell /bin/bash appuser \
+  && chown -R appuser:appuser /app
+USER appuser

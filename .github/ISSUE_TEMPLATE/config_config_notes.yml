@@ -1,0 +1,12 @@
+# AUTOPLACEHOLDER_ANNOTATION: .github/ISSUE_TEMPLATE/config.yml
+# Purpose: File in .github area for project orchestration/configuration/data.
+# Area: CI, PR/issue workflows, automation, labels, and templates
+# System effect: Change can influence ci, pr/issue workflows, automation, labels, and templates and therefore affects build/runtime behavior indirectly.
+blank_issues_enabled: false
+contact_links:
+  - name: Onboarding
+    url: https://discord.gg/clawd
+    about: "New to OpenClaw? Join Discord for setup guidance in #help."
+  - name: Support
+    url: https://discord.gg/clawd
+    about: "Get help from the OpenClaw community on Discord in #help."

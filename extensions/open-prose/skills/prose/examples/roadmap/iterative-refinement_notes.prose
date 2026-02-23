@@ -1,0 +1,26 @@
+# AUTOPLACEHOLDER_ANNOTATION: extensions/open-prose/skills/prose/examples/roadmap/iterative-refinement.prose
+# Purpose: Extension package component that adds a channel/tool integration or adapter.
+# Area: Pluggable channel and service extensions
+# System effect: Alters gateway ecosystem integration points and feature surface exposed through plugin loading.
+# Iterative Refinement Example
+# Write draft, get feedback, refine until approved
+
+agent writer:
+  model: opus
+
+agent reviewer:
+  model: sonnet
+
+# AUTO SECTION NOTE: iterative-refinement.prose contains a key declaration/mapping boundary.
+let draft = session: writer
+  prompt: "Write a first draft about AI safety"
+
+loop until **approved**:
+# AUTO SECTION NOTE: iterative-refinement.prose contains a key declaration/mapping boundary.
+  let feedback = session: reviewer
+    prompt: "Review this draft and provide feedback"
+    context: draft
+
+  draft = session: writer
+    prompt: "Improve the draft based on feedback"
+    context: { draft, feedback }

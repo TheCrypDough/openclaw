@@ -1,0 +1,13 @@
+/*
+ * AUTO ANNOTATION
+ * File: ui/src/styles.css
+ * Purpose: UI source/configuration for one of OpenClaw frontend surfaces.
+ * Module area: Web UI package and frontend runtime
+ * System effect: Changes impact interaction layer and operator experience.
+ * Marker: AUTOPLACEHOLDER_ANNOTATION
+ */
+@import "./styles/base.css";
+@import "./styles/layout.css";
+@import "./styles/layout.mobile.css";
+@import "./styles/components.css";
+@import "./styles/config.css";

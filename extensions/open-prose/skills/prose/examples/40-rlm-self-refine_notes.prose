@@ -1,0 +1,38 @@
+# AUTOPLACEHOLDER_ANNOTATION: extensions/open-prose/skills/prose/examples/40-rlm-self-refine.prose
+# Purpose: Extension package component that adds a channel/tool integration or adapter.
+# Area: Pluggable channel and service extensions
+# System effect: Alters gateway ecosystem integration points and feature surface exposed through plugin loading.
+# RLM: Self-Refinement
+# Recursive improvement until quality threshold
+
+input artifact: "The artifact to refine"
+input criteria: "Quality criteria"
+
+agent evaluator:
+  model: sonnet
+  prompt: "Score 0-100 against criteria. List specific issues."
+
+agent refiner:
+  model: opus
+  prompt: "Make targeted improvements. Preserve what works."
+
+block refine(content, depth):
+  if depth <= 0:
+    output content
+
+# AUTO SECTION NOTE: 40-rlm-self-refine.prose contains a key declaration/mapping boundary.
+  let eval = session: evaluator
+    prompt: "Evaluate against: {criteria}"
+    context: content
+
+  if **score >= 85**:
+    output content
+
+# AUTO SECTION NOTE: 40-rlm-self-refine.prose contains a key declaration/mapping boundary.
+  let improved = session: refiner
+    prompt: "Fix the identified issues"
+    context: { artifact: content, evaluation: eval }
+
+  output do refine(improved, depth - 1)
+
+output result = do refine(artifact, 5)

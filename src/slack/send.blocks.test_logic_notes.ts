@@ -1,0 +1,147 @@
+/*
+ * AUTO ANNOTATION
+ * File: src/slack/send.blocks.test.ts
+ * Purpose: Implements core OpenClaw runtime behavior for core application source (gateway, cli, providers, channels).
+ * Module area: Core application source (gateway, CLI, providers, channels)
+ * System effect: When changed, core execution path for message, session, or provider behavior may change.
+ * Marker: AUTOPLACEHOLDER_ANNOTATION
+ */
+import { describe, expect, it } from "vitest";
+import { createSlackSendTestClient, installSlackBlockTestMocks } from "./blocks.test-helpers.js";
+
+installSlackBlockTestMocks();
+const { sendMessageSlack } = await import("./send.js");
+
+describe("sendMessageSlack blocks", () => {
+  it("posts blocks with fallback text when message is empty", async () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const client = createSlackSendTestClient();
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const result = await sendMessageSlack("channel:C123", "", {
+      token: "xoxb-test",
+      client,
+      blocks: [{ type: "divider" }],
+    });
+
+    expect(client.conversations.open).not.toHaveBeenCalled();
+    expect(client.chat.postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        channel: "C123",
+        text: "Shared a Block Kit message",
+        blocks: [{ type: "divider" }],
+      }),
+    );
+    expect(result).toEqual({ messageId: "171234.567", channelId: "C123" });
+  });
+
+  it("derives fallback text from image blocks", async () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const client = createSlackSendTestClient();
+    await sendMessageSlack("channel:C123", "", {
+      token: "xoxb-test",
+      client,
+      blocks: [{ type: "image", image_url: "https://example.com/a.png", alt_text: "Build chart" }],
+    });
+
+    expect(client.chat.postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        text: "Build chart",
+      }),
+    );
+  });
+
+  it("derives fallback text from video blocks", async () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const client = createSlackSendTestClient();
+    await sendMessageSlack("channel:C123", "", {
+      token: "xoxb-test",
+      client,
+      blocks: [
+        {
+          type: "video",
+          title: { type: "plain_text", text: "Release demo" },
+          video_url: "https://example.com/demo.mp4",
+          thumbnail_url: "https://example.com/thumb.jpg",
+          alt_text: "demo",
+        },
+      ],
+    });
+
+    expect(client.chat.postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        text: "Release demo",
+      }),
+    );
+  });
+
+  it("derives fallback text from file blocks", async () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const client = createSlackSendTestClient();
+    await sendMessageSlack("channel:C123", "", {
+      token: "xoxb-test",
+      client,
+      blocks: [{ type: "file", source: "remote", external_id: "F123" }],
+    });
+
+    expect(client.chat.postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        text: "Shared a file",
+      }),
+    );
+  });
+
+  it("rejects blocks combined with mediaUrl", async () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const client = createSlackSendTestClient();
+    await expect(
+      sendMessageSlack("channel:C123", "hi", {
+        token: "xoxb-test",
+        client,
+        mediaUrl: "https://example.com/image.png",
+        blocks: [{ type: "divider" }],
+      }),
+    ).rejects.toThrow(/does not support blocks with mediaUrl/i);
+    expect(client.chat.postMessage).not.toHaveBeenCalled();
+  });
+
+  it("rejects empty blocks arrays from runtime callers", async () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const client = createSlackSendTestClient();
+    await expect(
+      sendMessageSlack("channel:C123", "hi", {
+        token: "xoxb-test",
+        client,
+        blocks: [],
+      }),
+    ).rejects.toThrow(/must contain at least one block/i);
+    expect(client.chat.postMessage).not.toHaveBeenCalled();
+  });
+
+  it("rejects blocks arrays above Slack max count", async () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const client = createSlackSendTestClient();
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const blocks = Array.from({ length: 51 }, () => ({ type: "divider" }));
+    await expect(
+      sendMessageSlack("channel:C123", "hi", {
+        token: "xoxb-test",
+        client,
+        blocks,
+      }),
+    ).rejects.toThrow(/cannot exceed 50 items/i);
+    expect(client.chat.postMessage).not.toHaveBeenCalled();
+  });
+
+  it("rejects blocks missing type from runtime callers", async () => {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const client = createSlackSendTestClient();
+    await expect(
+      sendMessageSlack("channel:C123", "hi", {
+        token: "xoxb-test",
+        client,
+        blocks: [{} as { type: string }],
+      }),
+    ).rejects.toThrow(/non-empty string type/i);
+    expect(client.chat.postMessage).not.toHaveBeenCalled();
+  });
+});

@@ -1,0 +1,14 @@
+<!-- AUTOPLACEHOLDER_ANNOTATION -->
+## File Annotation: vendor/a2ui/requirements-docs.txt
+- **Purpose:** File in vendor area for project orchestration/configuration/data.
+- **Module area:** Vendored third-party code/assets (e.g., bundled UI runtime)
+- **System effect:** Change can influence vendored third-party code/assets (e.g., bundled ui runtime) and therefore affects build/runtime behavior indirectly.
+mkdocs-material
+mkdocs-redirects
+mkdocs-macros-plugin
+mkdocs-llmstxt
+mkdocs-include-markdown-plugin
+mkdocs-mermaid2-plugin
+sphinx
+furo
+myst-parser

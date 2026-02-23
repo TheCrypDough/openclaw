@@ -1,0 +1,7 @@
+# AUTOPLACEHOLDER_ANNOTATION: .vscode/extensions.json
+# Purpose: File in .vscode area for project orchestration/configuration/data.
+# Area: Editor project preferences and extension recommendations
+# System effect: Change can influence editor project preferences and extension recommendations and therefore affects build/runtime behavior indirectly.
+{
+  "recommendations": ["oxc.oxc-vscode"]
+}

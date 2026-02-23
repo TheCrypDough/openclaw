@@ -1,0 +1,8 @@
+# AUTOPLACEHOLDER_ANNOTATION: vendor/a2ui/renderers/lit/src/0.8/schemas/.gitignore
+# Purpose: File in vendor area for project orchestration/configuration/data.
+# Area: Vendored third-party code/assets (e.g., bundled UI runtime)
+# System effect: Change can influence vendored third-party code/assets (e.g., bundled ui runtime) and therefore affects build/runtime behavior indirectly.
+# Copied schema files
+# (needed for the build but otherwise redundant)
+*.json
+!server_to_client_with_standard_catalog.json

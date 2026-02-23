@@ -1,0 +1,36 @@
+# AUTOPLACEHOLDER_ANNOTATION: extensions/tlon/package.json
+# Purpose: Extension package component that adds a channel/tool integration or adapter.
+# Area: Pluggable channel and service extensions
+# System effect: Alters gateway ecosystem integration points and feature surface exposed through plugin loading.
+{
+  "name": "@openclaw/tlon",
+  "version": "2026.2.22",
+  "description": "OpenClaw Tlon/Urbit channel plugin",
+  "type": "module",
+  "dependencies": {
+    "@urbit/aura": "^3.0.0"
+  },
+  "devDependencies": {
+    "openclaw": "workspace:*"
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ],
+    "channel": {
+      "id": "tlon",
+      "label": "Tlon",
+      "selectionLabel": "Tlon (Urbit)",
+      "docsPath": "/channels/tlon",
+      "docsLabel": "tlon",
+      "blurb": "decentralized messaging on Urbit; install the plugin to enable.",
+      "order": 90,
+      "quickstartAllowFrom": true
+    },
+    "install": {
+      "npmSpec": "@openclaw/tlon",
+      "localPath": "extensions/tlon",
+      "defaultChoice": "npm"
+    }
+  }
+}

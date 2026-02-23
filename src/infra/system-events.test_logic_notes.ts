@@ -1,0 +1,90 @@
+/*
+ * AUTO ANNOTATION
+ * File: src/infra/system-events.test.ts
+ * Purpose: Implements core OpenClaw runtime behavior for core application source (gateway, cli, providers, channels).
+ * Module area: Core application source (gateway, CLI, providers, channels)
+ * System effect: When changed, core execution path for message, session, or provider behavior may change.
+ * Marker: AUTOPLACEHOLDER_ANNOTATION
+ */
+import { beforeEach, describe, expect, it } from "vitest";
+import { prependSystemEvents } from "../auto-reply/reply/session-updates.js";
+import type { OpenClawConfig } from "../config/config.js";
+import { resolveMainSessionKey } from "../config/sessions.js";
+import { isCronSystemEvent } from "./heartbeat-runner.js";
+import { enqueueSystemEvent, peekSystemEvents, resetSystemEventsForTest } from "./system-events.js";
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+const cfg = {} as unknown as OpenClawConfig;
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+const mainKey = resolveMainSessionKey(cfg);
+
+describe("system events (session routing)", () => {
+  beforeEach(() => {
+    resetSystemEventsForTest();
+  });
+
+  it("does not leak session-scoped events into main", async () => {
+    enqueueSystemEvent("Discord reaction added: ✅", {
+      sessionKey: "discord:group:123",
+      contextKey: "discord:reaction:added:msg:user:✅",
+    });
+
+    expect(peekSystemEvents(mainKey)).toEqual([]);
+    expect(peekSystemEvents("discord:group:123")).toEqual(["Discord reaction added: ✅"]);
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const main = await prependSystemEvents({
+      cfg,
+      sessionKey: mainKey,
+      isMainSession: true,
+      isNewSession: false,
+      prefixedBodyBase: "hello",
+    });
+    expect(main).toBe("hello");
+    expect(peekSystemEvents("discord:group:123")).toEqual(["Discord reaction added: ✅"]);
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const discord = await prependSystemEvents({
+      cfg,
+      sessionKey: "discord:group:123",
+      isMainSession: false,
+      isNewSession: false,
+      prefixedBodyBase: "hi",
+    });
+    expect(discord).toMatch(/^System: \[[^\]]+\] Discord reaction added: ✅\n\nhi$/);
+    expect(peekSystemEvents("discord:group:123")).toEqual([]);
+  });
+
+  it("requires an explicit session key", () => {
+    expect(() => enqueueSystemEvent("Node: Mac Studio", { sessionKey: " " })).toThrow("sessionKey");
+  });
+});
+
+describe("isCronSystemEvent", () => {
+  it("returns false for empty entries", () => {
+    expect(isCronSystemEvent("")).toBe(false);
+    expect(isCronSystemEvent("   ")).toBe(false);
+  });
+
+  it("returns false for heartbeat ack markers", () => {
+    expect(isCronSystemEvent("HEARTBEAT_OK")).toBe(false);
+    expect(isCronSystemEvent("HEARTBEAT_OK 🦞")).toBe(false);
+    expect(isCronSystemEvent("heartbeat_ok")).toBe(false);
+    expect(isCronSystemEvent("HEARTBEAT_OK:")).toBe(false);
+    expect(isCronSystemEvent("HEARTBEAT_OK, continue")).toBe(false);
+  });
+
+  it("returns false for heartbeat poll and wake noise", () => {
+    expect(isCronSystemEvent("heartbeat poll: pending")).toBe(false);
+    expect(isCronSystemEvent("heartbeat wake complete")).toBe(false);
+  });
+
+  it("returns false for exec completion events", () => {
+    expect(isCronSystemEvent("Exec finished (gateway id=abc, code 0)")).toBe(false);
+  });
+
+  it("returns true for real cron reminder content", () => {
+    expect(isCronSystemEvent("Reminder: Check Base Scout results")).toBe(true);
+    expect(isCronSystemEvent("Send weekly status update to the team")).toBe(true);
+  });
+});

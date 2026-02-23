@@ -1,0 +1,14 @@
+# AUTOPLACEHOLDER_ANNOTATION: extensions/feishu/openclaw.plugin.json
+# Purpose: Extension package component that adds a channel/tool integration or adapter.
+# Area: Pluggable channel and service extensions
+# System effect: Alters gateway ecosystem integration points and feature surface exposed through plugin loading.
+{
+  "id": "feishu",
+  "channels": ["feishu"],
+  "skills": ["./skills"],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}

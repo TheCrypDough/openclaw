@@ -1,0 +1,26 @@
+# AUTOPLACEHOLDER_ANNOTATION: extensions/open-prose/skills/prose/examples/20-fixed-loops.prose
+# Purpose: Extension package component that adds a channel/tool integration or adapter.
+# Area: Pluggable channel and service extensions
+# System effect: Alters gateway ecosystem integration points and feature surface exposed through plugin loading.
+# Example: Fixed Loops in OpenProse
+# Demonstrates repeat, for-each, and parallel for-each patterns
+
+# Repeat block - generate multiple ideas
+repeat 3:
+  session "Generate a creative app idea"
+
+# For-each block - iterate over a collection
+# AUTO SECTION NOTE: 20-fixed-loops.prose contains a key declaration/mapping boundary.
+let features = ["authentication", "dashboard", "notifications"]
+for feature in features:
+  session "Design the user interface for this feature"
+    context: feature
+
+# Parallel for-each - research in parallel
+# AUTO SECTION NOTE: 20-fixed-loops.prose contains a key declaration/mapping boundary.
+let topics = ["market size", "competitors", "technology stack"]
+parallel for topic in topics:
+  session "Research this aspect of the startup idea"
+    context: topic
+
+session "Synthesize all research into a business plan"

@@ -1,0 +1,25 @@
+/*
+ * AUTO ANNOTATION
+ * File: src/gateway/protocol/schema.ts
+ * Purpose: Implements core OpenClaw runtime behavior for core application source (gateway, cli, providers, channels).
+ * Module area: Core application source (gateway, CLI, providers, channels)
+ * System effect: When changed, core execution path for message, session, or provider behavior may change.
+ * Marker: AUTOPLACEHOLDER_ANNOTATION
+ */
+export * from "./schema/agent.js";
+export * from "./schema/agents-models-skills.js";
+export * from "./schema/channels.js";
+export * from "./schema/config.js";
+export * from "./schema/cron.js";
+export * from "./schema/error-codes.js";
+export * from "./schema/exec-approvals.js";
+export * from "./schema/devices.js";
+export * from "./schema/frames.js";
+export * from "./schema/logs-chat.js";
+export * from "./schema/nodes.js";
+export * from "./schema/protocol-schemas.js";
+export * from "./schema/push.js";
+export * from "./schema/sessions.js";
+export * from "./schema/snapshot.js";
+export * from "./schema/types.js";
+export * from "./schema/wizard.js";

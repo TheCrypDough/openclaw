@@ -1,0 +1,154 @@
+/*
+ * AUTO ANNOTATION
+ * File: src/discord/api.ts
+ * Purpose: Implements core OpenClaw runtime behavior for core application source (gateway, cli, providers, channels).
+ * Module area: Core application source (gateway, CLI, providers, channels)
+ * System effect: When changed, core execution path for message, session, or provider behavior may change.
+ * Marker: AUTOPLACEHOLDER_ANNOTATION
+ */
+import { resolveFetch } from "../infra/fetch.js";
+import { resolveRetryConfig, retryAsync, type RetryConfig } from "../infra/retry.js";
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+const DISCORD_API_BASE = "https://discord.com/api/v10";
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+const DISCORD_API_RETRY_DEFAULTS = {
+  attempts: 3,
+  minDelayMs: 500,
+  maxDelayMs: 30_000,
+  jitter: 0.1,
+};
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+type DiscordApiErrorPayload = {
+  message?: string;
+  retry_after?: number;
+  code?: number;
+  global?: boolean;
+};
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+function parseDiscordApiErrorPayload(text: string): DiscordApiErrorPayload | null {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const trimmed = text.trim();
+  if (!trimmed.startsWith("{") || !trimmed.endsWith("}")) {
+    return null;
+  }
+  try {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+    const payload = JSON.parse(trimmed);
+    if (payload && typeof payload === "object") {
+      return payload as DiscordApiErrorPayload;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+function parseRetryAfterSeconds(text: string, response: Response): number | undefined {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const payload = parseDiscordApiErrorPayload(text);
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const retryAfter =
+    payload && typeof payload.retry_after === "number" && Number.isFinite(payload.retry_after)
+      ? payload.retry_after
+      : undefined;
+  if (retryAfter !== undefined) {
+    return retryAfter;
+  }
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const header = response.headers.get("Retry-After");
+  if (!header) {
+    return undefined;
+  }
+  const parsed = Number(header);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function formatRetryAfterSeconds(value: number | undefined): string | undefined {
+  if (value === undefined || !Number.isFinite(value) || value < 0) {
+    return undefined;
+  }
+  const rounded = value < 10 ? value.toFixed(1) : Math.round(value).toString();
+  return `${rounded}s`;
+}
+
+function formatDiscordApiErrorText(text: string): string | undefined {
+  const trimmed = text.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+  const payload = parseDiscordApiErrorPayload(trimmed);
+  if (!payload) {
+    const looksJson = trimmed.startsWith("{") && trimmed.endsWith("}");
+    return looksJson ? "unknown error" : trimmed;
+  }
+  const message =
+    typeof payload.message === "string" && payload.message.trim()
+      ? payload.message.trim()
+      : "unknown error";
+  const retryAfter = formatRetryAfterSeconds(
+    typeof payload.retry_after === "number" ? payload.retry_after : undefined,
+  );
+  return retryAfter ? `${message} (retry after ${retryAfter})` : message;
+}
+
+export class DiscordApiError extends Error {
+  status: number;
+  retryAfter?: number;
+
+  constructor(message: string, status: number, retryAfter?: number) {
+    super(message);
+    this.status = status;
+    this.retryAfter = retryAfter;
+  }
+}
+
+export type DiscordFetchOptions = {
+  retry?: RetryConfig;
+  label?: string;
+};
+
+export async function fetchDiscord<T>(
+  path: string,
+  token: string,
+  fetcher: typeof fetch = fetch,
+  options?: DiscordFetchOptions,
+): Promise<T> {
+  const fetchImpl = resolveFetch(fetcher);
+  if (!fetchImpl) {
+    throw new Error("fetch is not available");
+  }
+
+  const retryConfig = resolveRetryConfig(DISCORD_API_RETRY_DEFAULTS, options?.retry);
+  return retryAsync(
+    async () => {
+      const res = await fetchImpl(`${DISCORD_API_BASE}${path}`, {
+        headers: { Authorization: `Bot ${token}` },
+      });
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        const detail = formatDiscordApiErrorText(text);
+        const suffix = detail ? `: ${detail}` : "";
+        const retryAfter = res.status === 429 ? parseRetryAfterSeconds(text, res) : undefined;
+        throw new DiscordApiError(
+          `Discord API ${path} failed (${res.status})${suffix}`,
+          res.status,
+          retryAfter,
+        );
+      }
+      return (await res.json()) as T;
+    },
+    {
+      ...retryConfig,
+      label: options?.label ?? path,
+      shouldRetry: (err) => err instanceof DiscordApiError && err.status === 429,
+      retryAfterMs: (err) =>
+        err instanceof DiscordApiError && typeof err.retryAfter === "number"
+          ? err.retryAfter * 1000
+          : undefined,
+    },
+  );
+}

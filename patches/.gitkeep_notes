@@ -1,0 +1,4 @@
+# AUTOPLACEHOLDER_ANNOTATION: patches/.gitkeep
+# Purpose: File in patches area for project orchestration/configuration/data.
+# Area: Dependency patch artifacts and patch metadata
+# System effect: Change can influence dependency patch artifacts and patch metadata and therefore affects build/runtime behavior indirectly.

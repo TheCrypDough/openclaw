@@ -1,0 +1,63 @@
+/*
+ * AUTO ANNOTATION
+ * File: src/commands/auth-choice.preferred-provider.ts
+ * Purpose: Implements core OpenClaw runtime behavior for core application source (gateway, cli, providers, channels).
+ * Module area: Core application source (gateway, CLI, providers, channels)
+ * System effect: When changed, core execution path for message, session, or provider behavior may change.
+ * Marker: AUTOPLACEHOLDER_ANNOTATION
+ */
+import type { AuthChoice } from "./onboard-types.js";
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+const PREFERRED_PROVIDER_BY_AUTH_CHOICE: Partial<Record<AuthChoice, string>> = {
+  oauth: "anthropic",
+  "setup-token": "anthropic",
+  "claude-cli": "anthropic",
+  token: "anthropic",
+  apiKey: "anthropic",
+  vllm: "vllm",
+  "openai-codex": "openai-codex",
+  "codex-cli": "openai-codex",
+  chutes: "chutes",
+  "openai-api-key": "openai",
+  "openrouter-api-key": "openrouter",
+  "ai-gateway-api-key": "vercel-ai-gateway",
+  "cloudflare-ai-gateway-api-key": "cloudflare-ai-gateway",
+  "moonshot-api-key": "moonshot",
+  "moonshot-api-key-cn": "moonshot",
+  "kimi-code-api-key": "kimi-coding",
+  "gemini-api-key": "google",
+  "google-antigravity": "google-antigravity",
+  "google-gemini-cli": "google-gemini-cli",
+  "zai-api-key": "zai",
+  "zai-coding-global": "zai",
+  "zai-coding-cn": "zai",
+  "zai-global": "zai",
+  "zai-cn": "zai",
+  "xiaomi-api-key": "xiaomi",
+  "synthetic-api-key": "synthetic",
+  "venice-api-key": "venice",
+  "together-api-key": "together",
+  "huggingface-api-key": "huggingface",
+  "github-copilot": "github-copilot",
+  "copilot-proxy": "copilot-proxy",
+  "minimax-cloud": "minimax",
+  "minimax-api": "minimax",
+  "minimax-api-key-cn": "minimax-cn",
+  "minimax-api-lightning": "minimax",
+  minimax: "lmstudio",
+  "opencode-zen": "opencode",
+  "xai-api-key": "xai",
+  "litellm-api-key": "litellm",
+  "qwen-portal": "qwen-portal",
+  "volcengine-api-key": "volcengine",
+  "byteplus-api-key": "byteplus",
+  "minimax-portal": "minimax-portal",
+  "qianfan-api-key": "qianfan",
+  "custom-api-key": "custom",
+};
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+export function resolvePreferredProviderForAuthChoice(choice: AuthChoice): string | undefined {
+  return PREFERRED_PROVIDER_BY_AUTH_CHOICE[choice];
+}

@@ -1,0 +1,10 @@
+<!-- AUTOPLACEHOLDER_ANNOTATION -->
+## File Annotation: vendor/a2ui/specification/0.9/json/standard_catalog_rules.txt
+- **Purpose:** File in vendor area for project orchestration/configuration/data.
+- **Module area:** Vendored third-party code/assets (e.g., bundled UI runtime)
+- **System effect:** Change can influence vendored third-party code/assets (e.g., bundled ui runtime) and therefore affects build/runtime behavior indirectly.
+**REQUIRED PROPERTIES:** You MUST include ALL required properties for every component, even if they are inside a template or will be bound to data.
+- For 'Text', you MUST provide 'text'. If dynamic, use { "path": "..." }.
+- For 'Image', you MUST provide 'url'. If dynamic, use { "path": "..." }.
+- For 'Button', you MUST provide 'action'.
+- For 'TextField', 'CheckBox', etc., you MUST provide 'label'.

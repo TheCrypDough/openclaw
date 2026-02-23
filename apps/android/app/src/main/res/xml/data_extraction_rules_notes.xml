@@ -1,0 +1,15 @@
+<!-- AUTOPLACEHOLDER_ANNOTATION -->
+<annotation path="apps/android/app/src/main/res/xml/data_extraction_rules.xml">
+  <purpose>File in apps area for project orchestration/configuration/data.</purpose>
+  <area>Native apps (macOS / iOS / Android / shared app assets)</area>
+  <impact>Change can influence native apps (macos / ios / android / shared app assets) and therefore affects build/runtime behavior indirectly.</impact>
+</annotation>
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+  <cloud-backup>
+    <include domain="file" path="." />
+  </cloud-backup>
+  <device-transfer>
+    <include domain="file" path="." />
+  </device-transfer>
+</data-extraction-rules>

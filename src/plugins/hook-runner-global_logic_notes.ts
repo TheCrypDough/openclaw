@@ -1,0 +1,106 @@
+/*
+ * AUTO ANNOTATION
+ * File: src/plugins/hook-runner-global.ts
+ * Purpose: Implements core OpenClaw runtime behavior for core application source (gateway, cli, providers, channels).
+ * Module area: Core application source (gateway, CLI, providers, channels)
+ * System effect: When changed, core execution path for message, session, or provider behavior may change.
+ * Marker: AUTOPLACEHOLDER_ANNOTATION
+ */
+/**
+ * Global Plugin Hook Runner
+ *
+ * Singleton hook runner that's initialized when plugins are loaded
+ * and can be called from anywhere in the codebase.
+ */
+
+import { createSubsystemLogger } from "../logging/subsystem.js";
+import { createHookRunner, type HookRunner } from "./hooks.js";
+import type { PluginRegistry } from "./registry.js";
+import type { PluginHookGatewayContext, PluginHookGatewayStopEvent } from "./types.js";
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+const log = createSubsystemLogger("plugins");
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+let globalHookRunner: HookRunner | null = null;
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+let globalRegistry: PluginRegistry | null = null;
+
+/**
+ * Initialize the global hook runner with a plugin registry.
+ * Called once when plugins are loaded during gateway startup.
+ */
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+export function initializeGlobalHookRunner(registry: PluginRegistry): void {
+  globalRegistry = registry;
+  globalHookRunner = createHookRunner(registry, {
+    logger: {
+      debug: (msg) => log.debug(msg),
+      warn: (msg) => log.warn(msg),
+      error: (msg) => log.error(msg),
+    },
+    catchErrors: true,
+  });
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const hookCount = registry.hooks.length;
+  if (hookCount > 0) {
+    log.info(`hook runner initialized with ${hookCount} registered hooks`);
+  }
+}
+
+/**
+ * Get the global hook runner.
+ * Returns null if plugins haven't been loaded yet.
+ */
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+export function getGlobalHookRunner(): HookRunner | null {
+  return globalHookRunner;
+}
+
+/**
+ * Get the global plugin registry.
+ * Returns null if plugins haven't been loaded yet.
+ */
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+export function getGlobalPluginRegistry(): PluginRegistry | null {
+  return globalRegistry;
+}
+
+/**
+ * Check if any hooks are registered for a given hook name.
+ */
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+export function hasGlobalHooks(hookName: Parameters<HookRunner["hasHooks"]>[0]): boolean {
+  return globalHookRunner?.hasHooks(hookName) ?? false;
+}
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+export async function runGlobalGatewayStopSafely(params: {
+  event: PluginHookGatewayStopEvent;
+  ctx: PluginHookGatewayContext;
+  onError?: (err: unknown) => void;
+}): Promise<void> {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const hookRunner = getGlobalHookRunner();
+  if (!hookRunner?.hasHooks("gateway_stop")) {
+    return;
+  }
+  try {
+    await hookRunner.runGatewayStop(params.event, params.ctx);
+  } catch (err) {
+    if (params.onError) {
+      params.onError(err);
+      return;
+    }
+    log.warn(`gateway_stop hook failed: ${String(err)}`);
+  }
+}
+
+/**
+ * Reset the global hook runner (for testing).
+ */
+export function resetGlobalHookRunner(): void {
+  globalHookRunner = null;
+  globalRegistry = null;
+}

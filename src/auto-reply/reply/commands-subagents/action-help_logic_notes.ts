@@ -1,0 +1,15 @@
+/*
+ * AUTO ANNOTATION
+ * File: src/auto-reply/reply/commands-subagents/action-help.ts
+ * Purpose: Implements core OpenClaw runtime behavior for core application source (gateway, cli, providers, channels).
+ * Module area: Core application source (gateway, CLI, providers, channels)
+ * System effect: When changed, core execution path for message, session, or provider behavior may change.
+ * Marker: AUTOPLACEHOLDER_ANNOTATION
+ */
+import type { CommandHandlerResult } from "../commands-types.js";
+import { buildSubagentsHelp, stopWithText } from "./shared.js";
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+export function handleSubagentsHelpAction(): CommandHandlerResult {
+  return stopWithText(buildSubagentsHelp());
+}

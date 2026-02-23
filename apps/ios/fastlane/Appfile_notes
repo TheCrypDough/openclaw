@@ -1,0 +1,11 @@
+# AUTOPLACEHOLDER_ANNOTATION: apps/ios/fastlane/Appfile
+# Purpose: File in apps area for project orchestration/configuration/data.
+# Area: Native apps (macOS / iOS / Android / shared app assets)
+# System effect: Change can influence native apps (macos / ios / android / shared app assets) and therefore affects build/runtime behavior indirectly.
+app_identifier("bot.molt.ios")
+
+# Auth is expected via App Store Connect API key.
+# Provide either:
+# - APP_STORE_CONNECT_API_KEY_PATH=/path/to/AuthKey_XXXXXX.p8.json (recommended)
+# or:
+# - ASC_KEY_ID, ASC_ISSUER_ID, and ASC_KEY_CONTENT (base64 or raw p8 content)

@@ -1,0 +1,60 @@
+# AUTOPLACEHOLDER_ANNOTATION: extensions/open-prose/skills/prose/examples/43-rlm-pairwise.prose
+# Purpose: Extension package component that adds a channel/tool integration or adapter.
+# Area: Pluggable channel and service extensions
+# System effect: Alters gateway ecosystem integration points and feature surface exposed through plugin loading.
+# RLM: Pairwise Analysis
+# O(n²) tasks through batched pair processing
+# Base LLMs: <1% accuracy. RLMs: 58%. (OOLONG-Pairs benchmark)
+
+input items: "Items to compare pairwise"
+input relation: "Relationship to identify"
+
+agent comparator:
+  model: sonnet
+  prompt: "Analyze relationship. Return: {pair, relation, strength, evidence}."
+
+agent mapper:
+  model: opus
+  prompt: "Build relationship map. Identify clusters and anomalies."
+
+block pairs(list):
+# AUTO SECTION NOTE: 43-rlm-pairwise.prose contains a key declaration/mapping boundary.
+  let result = []
+  for i, a in list:
+    for j, b in list:
+      if j > i:
+        result = result + [{first: a, second: b}]
+  output result
+
+block analyze(items, rel, depth):
+# AUTO SECTION NOTE: 43-rlm-pairwise.prose contains a key declaration/mapping boundary.
+  let all_pairs = do pairs(items)
+
+  if **fewer than 100 pairs** or depth <= 0:
+    output all_pairs | pmap:
+      session: comparator
+        prompt: "Analyze {rel}"
+        context: item
+
+# AUTO SECTION NOTE: 43-rlm-pairwise.prose contains a key declaration/mapping boundary.
+  let batches = session "Split into batches of ~25 pairs"
+    context: all_pairs
+
+# AUTO SECTION NOTE: 43-rlm-pairwise.prose contains a key declaration/mapping boundary.
+  let results = []
+  parallel for batch in batches:
+# AUTO SECTION NOTE: 43-rlm-pairwise.prose contains a key declaration/mapping boundary.
+    let batch_results = batch | pmap:
+      session: comparator
+        prompt: "Analyze {rel}"
+        context: item
+    results = results + batch_results
+
+  output results
+
+# AUTO SECTION NOTE: 43-rlm-pairwise.prose contains a key declaration/mapping boundary.
+let relationships = do analyze(items, relation, 2)
+
+output map = session: mapper
+  prompt: "Build {relation} map"
+  context: { items, relationships }

@@ -1,0 +1,14 @@
+# AUTOPLACEHOLDER_ANNOTATION: scripts/systemd/openclaw-auth-monitor.timer
+# Purpose: Operational script for maintenance/build/release/test workflows (openclaw-auth-monitor.timer).
+# Area: Repo utility, build, release, and maintenance scripts
+# System effect: Used by developers/CI to automate setup, checks, packaging, and diagnostics.
+[Unit]
+Description=Check OpenClaw auth expiry every 30 minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=30min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

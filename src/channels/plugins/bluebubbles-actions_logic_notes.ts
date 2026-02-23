@@ -1,0 +1,46 @@
+/*
+ * AUTO ANNOTATION
+ * File: src/channels/plugins/bluebubbles-actions.ts
+ * Purpose: Implements core OpenClaw runtime behavior for core application source (gateway, cli, providers, channels).
+ * Module area: Core application source (gateway, CLI, providers, channels)
+ * System effect: When changed, core execution path for message, session, or provider behavior may change.
+ * Marker: AUTOPLACEHOLDER_ANNOTATION
+ */
+import type { ChannelMessageActionName } from "./types.js";
+
+export type BlueBubblesActionSpec = {
+  gate: string;
+  groupOnly?: boolean;
+  unsupportedOnMacOS26?: boolean;
+};
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+export const BLUEBUBBLES_ACTIONS = {
+  react: { gate: "reactions" },
+  edit: { gate: "edit", unsupportedOnMacOS26: true },
+  unsend: { gate: "unsend" },
+  reply: { gate: "reply" },
+  sendWithEffect: { gate: "sendWithEffect" },
+  renameGroup: { gate: "renameGroup", groupOnly: true },
+  setGroupIcon: { gate: "setGroupIcon", groupOnly: true },
+  addParticipant: { gate: "addParticipant", groupOnly: true },
+  removeParticipant: { gate: "removeParticipant", groupOnly: true },
+  leaveGroup: { gate: "leaveGroup", groupOnly: true },
+  sendAttachment: { gate: "sendAttachment" },
+} as const satisfies Partial<Record<ChannelMessageActionName, BlueBubblesActionSpec>>;
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+const BLUEBUBBLES_ACTION_SPECS = BLUEBUBBLES_ACTIONS as Record<
+  keyof typeof BLUEBUBBLES_ACTIONS,
+  BlueBubblesActionSpec
+>;
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+export const BLUEBUBBLES_ACTION_NAMES = Object.keys(
+  BLUEBUBBLES_ACTIONS,
+) as (keyof typeof BLUEBUBBLES_ACTIONS)[];
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+export const BLUEBUBBLES_GROUP_ACTIONS = new Set<ChannelMessageActionName>(
+  BLUEBUBBLES_ACTION_NAMES.filter((action) => BLUEBUBBLES_ACTION_SPECS[action]?.groupOnly),
+);

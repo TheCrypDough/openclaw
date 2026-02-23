@@ -1,0 +1,37 @@
+# AUTOPLACEHOLDER_ANNOTATION: Swabble/.gitignore
+# Purpose: File in Swabble area for project orchestration/configuration/data.
+# Area: Swift package subtree for related mobile tooling
+# System effect: Change can influence swift package subtree for related mobile tooling and therefore affects build/runtime behavior indirectly.
+# macOS
+.DS_Store
+
+# SwiftPM / Build
+/.build
+/.swiftpm
+/DerivedData
+xcuserdata/
+*.xcuserstate
+
+# Editors
+/.vscode
+.idea/
+
+# Xcode artifacts
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Playgrounds
+*.xcplayground
+playground.xcworkspace
+timeline.xctimeline
+
+# Carthage
+Carthage/Build/
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output

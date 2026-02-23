@@ -1,0 +1,130 @@
+/*
+ * AUTO ANNOTATION
+ * File: ui/src/ui/device-identity.ts
+ * Purpose: UI source/configuration for one of OpenClaw frontend surfaces.
+ * Module area: Web UI package and frontend runtime
+ * System effect: Changes impact interaction layer and operator experience.
+ * Marker: AUTOPLACEHOLDER_ANNOTATION
+ */
+import { getPublicKeyAsync, signAsync, utils } from "@noble/ed25519";
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+type StoredIdentity = {
+  version: 1;
+  deviceId: string;
+  publicKey: string;
+  privateKey: string;
+  createdAtMs: number;
+};
+
+export type DeviceIdentity = {
+  deviceId: string;
+  publicKey: string;
+  privateKey: string;
+};
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+const STORAGE_KEY = "openclaw-device-identity-v1";
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+function base64UrlEncode(bytes: Uint8Array): string {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  let binary = "";
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+  return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/g, "");
+}
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+function base64UrlDecode(input: string): Uint8Array {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const normalized = input.replaceAll("-", "+").replaceAll("_", "/");
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const padded = normalized + "=".repeat((4 - (normalized.length % 4)) % 4);
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const binary = atob(padded);
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const out = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) {
+    out[i] = binary.charCodeAt(i);
+  }
+  return out;
+}
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+function bytesToHex(bytes: Uint8Array): string {
+  return Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function fingerprintPublicKey(publicKey: Uint8Array): Promise<string> {
+  const hash = await crypto.subtle.digest("SHA-256", publicKey.slice().buffer);
+  return bytesToHex(new Uint8Array(hash));
+}
+
+async function generateIdentity(): Promise<DeviceIdentity> {
+  const privateKey = utils.randomSecretKey();
+  const publicKey = await getPublicKeyAsync(privateKey);
+  const deviceId = await fingerprintPublicKey(publicKey);
+  return {
+    deviceId,
+    publicKey: base64UrlEncode(publicKey),
+    privateKey: base64UrlEncode(privateKey),
+  };
+}
+
+export async function loadOrCreateDeviceIdentity(): Promise<DeviceIdentity> {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as StoredIdentity;
+      if (
+        parsed?.version === 1 &&
+        typeof parsed.deviceId === "string" &&
+        typeof parsed.publicKey === "string" &&
+        typeof parsed.privateKey === "string"
+      ) {
+        const derivedId = await fingerprintPublicKey(base64UrlDecode(parsed.publicKey));
+        if (derivedId !== parsed.deviceId) {
+          const updated: StoredIdentity = {
+            ...parsed,
+            deviceId: derivedId,
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+          return {
+            deviceId: derivedId,
+            publicKey: parsed.publicKey,
+            privateKey: parsed.privateKey,
+          };
+        }
+        return {
+          deviceId: parsed.deviceId,
+          publicKey: parsed.publicKey,
+          privateKey: parsed.privateKey,
+        };
+      }
+    }
+  } catch {
+    // fall through to regenerate
+  }
+
+  const identity = await generateIdentity();
+  const stored: StoredIdentity = {
+    version: 1,
+    deviceId: identity.deviceId,
+    publicKey: identity.publicKey,
+    privateKey: identity.privateKey,
+    createdAtMs: Date.now(),
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+  return identity;
+}
+
+export async function signDevicePayload(privateKeyBase64Url: string, payload: string) {
+  const key = base64UrlDecode(privateKeyBase64Url);
+  const data = new TextEncoder().encode(payload);
+  const sig = await signAsync(data, key);
+  return base64UrlEncode(sig);
+}

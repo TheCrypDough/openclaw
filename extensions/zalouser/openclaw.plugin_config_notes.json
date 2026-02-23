@@ -1,0 +1,13 @@
+# AUTOPLACEHOLDER_ANNOTATION: extensions/zalouser/openclaw.plugin.json
+# Purpose: Extension package component that adds a channel/tool integration or adapter.
+# Area: Pluggable channel and service extensions
+# System effect: Alters gateway ecosystem integration points and feature surface exposed through plugin loading.
+{
+  "id": "zalouser",
+  "channels": ["zalouser"],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}

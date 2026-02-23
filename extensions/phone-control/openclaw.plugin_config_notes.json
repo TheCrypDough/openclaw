@@ -1,0 +1,14 @@
+# AUTOPLACEHOLDER_ANNOTATION: extensions/phone-control/openclaw.plugin.json
+# Purpose: Extension package component that adds a channel/tool integration or adapter.
+# Area: Pluggable channel and service extensions
+# System effect: Alters gateway ecosystem integration points and feature surface exposed through plugin loading.
+{
+  "id": "phone-control",
+  "name": "Phone Control",
+  "description": "Arm/disarm high-risk phone node commands (camera/screen/writes) with an optional auto-expiry.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}

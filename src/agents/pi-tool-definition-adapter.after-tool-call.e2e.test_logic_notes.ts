@@ -1,0 +1,169 @@
+/*
+ * AUTO ANNOTATION
+ * File: src/agents/pi-tool-definition-adapter.after-tool-call.e2e.test.ts
+ * Purpose: Implements core OpenClaw runtime behavior for core application source (gateway, cli, providers, channels).
+ * Module area: Core application source (gateway, CLI, providers, channels)
+ * System effect: When changed, core execution path for message, session, or provider behavior may change.
+ * Marker: AUTOPLACEHOLDER_ANNOTATION
+ */
+import type { AgentTool } from "@mariozechner/pi-agent-core";
+import { Type } from "@sinclair/typebox";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { toToolDefinitions } from "./pi-tool-definition-adapter.js";
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+const hookMocks = vi.hoisted(() => ({
+  runner: {
+    hasHooks: vi.fn((_: string) => false),
+    runAfterToolCall: vi.fn(async () => {}),
+  },
+  isToolWrappedWithBeforeToolCallHook: vi.fn(() => false),
+  consumeAdjustedParamsForToolCall: vi.fn((_: string) => undefined as unknown),
+  runBeforeToolCallHook: vi.fn(async ({ params }: { params: unknown }) => ({
+    blocked: false,
+    params,
+  })),
+}));
+
+vi.mock("../plugins/hook-runner-global.js", () => ({
+  getGlobalHookRunner: () => hookMocks.runner,
+}));
+
+vi.mock("./pi-tools.before-tool-call.js", () => ({
+  consumeAdjustedParamsForToolCall: hookMocks.consumeAdjustedParamsForToolCall,
+  isToolWrappedWithBeforeToolCallHook: hookMocks.isToolWrappedWithBeforeToolCallHook,
+  runBeforeToolCallHook: hookMocks.runBeforeToolCallHook,
+}));
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+function createReadTool() {
+  return {
+    name: "read",
+    label: "Read",
+    description: "reads",
+    parameters: Type.Object({}),
+    execute: vi.fn(async () => ({ content: [], details: { ok: true } })),
+  } satisfies AgentTool;
+}
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+type ToolExecute = ReturnType<typeof toToolDefinitions>[number]["execute"];
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+const extensionContext = {} as Parameters<ToolExecute>[4];
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+function enableAfterToolCallHook() {
+  hookMocks.runner.hasHooks.mockImplementation((name: string) => name === "after_tool_call");
+}
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+async function executeReadTool(callId: string) {
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const defs = toToolDefinitions([createReadTool()]);
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const def = defs[0];
+  if (!def) {
+    throw new Error("missing tool definition");
+  }
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+  const execute = (...args: Parameters<(typeof defs)[0]["execute"]>) => def.execute(...args);
+  return await execute(callId, { path: "/tmp/file" }, undefined, undefined, extensionContext);
+}
+
+ * AUTO SECTION NOTE: this declaration marks a core boundary in this module
+function expectReadAfterToolCallPayload(result: Awaited<ReturnType<typeof executeReadTool>>) {
+  expect(hookMocks.runner.runAfterToolCall).toHaveBeenCalledWith(
+    {
+      toolName: "read",
+      params: { mode: "safe" },
+      result,
+    },
+    { toolName: "read" },
+  );
+}
+
+describe("pi tool definition adapter after_tool_call", () => {
+  beforeEach(() => {
+    hookMocks.runner.hasHooks.mockReset();
+    hookMocks.runner.runAfterToolCall.mockReset();
+    hookMocks.runner.runAfterToolCall.mockResolvedValue(undefined);
+    hookMocks.isToolWrappedWithBeforeToolCallHook.mockReset();
+    hookMocks.isToolWrappedWithBeforeToolCallHook.mockReturnValue(false);
+    hookMocks.consumeAdjustedParamsForToolCall.mockReset();
+    hookMocks.consumeAdjustedParamsForToolCall.mockReturnValue(undefined);
+    hookMocks.runBeforeToolCallHook.mockReset();
+    hookMocks.runBeforeToolCallHook.mockImplementation(async ({ params }) => ({
+      blocked: false,
+      params,
+    }));
+  });
+
+  it("dispatches after_tool_call once on successful adapter execution", async () => {
+    enableAfterToolCallHook();
+    hookMocks.runBeforeToolCallHook.mockResolvedValue({
+      blocked: false,
+      params: { mode: "safe" },
+    });
+    const result = await executeReadTool("call-ok");
+
+    expect(result.details).toMatchObject({ ok: true });
+    expect(hookMocks.runner.runAfterToolCall).toHaveBeenCalledTimes(1);
+    expectReadAfterToolCallPayload(result);
+  });
+
+  it("uses wrapped-tool adjusted params for after_tool_call payload", async () => {
+    enableAfterToolCallHook();
+    hookMocks.isToolWrappedWithBeforeToolCallHook.mockReturnValue(true);
+    hookMocks.consumeAdjustedParamsForToolCall.mockReturnValue({ mode: "safe" } as unknown);
+    const result = await executeReadTool("call-ok-wrapped");
+
+    expect(result.details).toMatchObject({ ok: true });
+    expect(hookMocks.runBeforeToolCallHook).not.toHaveBeenCalled();
+    expectReadAfterToolCallPayload(result);
+  });
+
+  it("dispatches after_tool_call once on adapter error with normalized tool name", async () => {
+    enableAfterToolCallHook();
+    const tool = {
+      name: "bash",
+      label: "Bash",
+      description: "throws",
+      parameters: Type.Object({}),
+      execute: vi.fn(async () => {
+        throw new Error("boom");
+      }),
+    } satisfies AgentTool;
+
+    const defs = toToolDefinitions([tool]);
+    const def = defs[0];
+    if (!def) {
+      throw new Error("missing tool definition");
+    }
+    const execute = (...args: Parameters<(typeof defs)[0]["execute"]>) => def.execute(...args);
+    const result = await execute("call-err", { cmd: "ls" }, undefined, undefined, extensionContext);
+
+    expect(result.details).toMatchObject({
+      status: "error",
+      tool: "exec",
+      error: "boom",
+    });
+    expect(hookMocks.runner.runAfterToolCall).toHaveBeenCalledTimes(1);
+    expect(hookMocks.runner.runAfterToolCall).toHaveBeenCalledWith(
+      {
+        toolName: "exec",
+        params: { cmd: "ls" },
+        error: "boom",
+      },
+      { toolName: "exec" },
+    );
+  });
+
+  it("does not break execution when after_tool_call hook throws", async () => {
+    enableAfterToolCallHook();
+    hookMocks.runner.runAfterToolCall.mockRejectedValue(new Error("hook failed"));
+    const result = await executeReadTool("call-ok2");
+
+    expect(result.details).toMatchObject({ ok: true });
+    expect(hookMocks.runner.runAfterToolCall).toHaveBeenCalledTimes(1);
+  });
+});
