@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/TheCrypDough/openclaw",
+  "revision": "a54dc7fe80fc02e2a02e6901668a468fcb0cf8b4",
+  "branch": "main",
+  "mapped_at": "2026-10-03",
+  "tracked_file_count": 6500,
+  "scope": "Principal source architecture with complete tracked file inventory; runtime unverified",
+  "target": "docs/architecture-map",
+  "renderer_revision": "ed7f4d4b48d4424d36edfed8043de3de8dea6b45"
+}

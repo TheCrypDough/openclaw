@@ -1,0 +1,249 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "OpenClaw \u00b7 repository architecture",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/TheCrypDough/openclaw",
+      "revision": "a54dc7fe80fc02e2a02e6901668a468fcb0cf8b4"
+    },
+    "viewBox": [
+      1240,
+      650
+    ]
+  },
+  "components": [
+    {
+      "id": "entry",
+      "type": "frontend",
+      "label": "CLI and control UI",
+      "sublabel": "User-facing gateway entrypoints",
+      "pos": [
+        50,
+        65
+      ],
+      "size": [
+        210,
+        84
+      ],
+      "sources": [
+        {
+          "path": "src/entry.ts"
+        },
+        {
+          "path": "ui/src/ui/app.ts"
+        }
+      ]
+    },
+    {
+      "id": "gateway",
+      "type": "backend",
+      "label": "Gateway server",
+      "sublabel": "Sessions, channels and events",
+      "pos": [
+        515,
+        65
+      ],
+      "size": [
+        210,
+        84
+      ],
+      "sources": [
+        {
+          "path": "src/gateway/server.impl.ts"
+        }
+      ]
+    },
+    {
+      "id": "routing",
+      "type": "backend",
+      "label": "Agent routing",
+      "sublabel": "Channel and peer session keys",
+      "pos": [
+        980,
+        65
+      ],
+      "size": [
+        210,
+        84
+      ],
+      "sources": [
+        {
+          "path": "src/routing/resolve-route.ts"
+        }
+      ]
+    },
+    {
+      "id": "channels",
+      "type": "external",
+      "label": "Channel plugins",
+      "sublabel": "Configured messaging adapters",
+      "pos": [
+        50,
+        290
+      ],
+      "size": [
+        210,
+        84
+      ],
+      "sources": [
+        {
+          "path": "src/channels/plugins/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "Embedded agent runner",
+      "sublabel": "Queued and streamed agent turns",
+      "pos": [
+        515,
+        290
+      ],
+      "size": [
+        210,
+        84
+      ],
+      "sources": [
+        {
+          "path": "src/agents/pi-embedded-runner.ts"
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "backend",
+      "label": "Tool interfaces",
+      "sublabel": "SDK and agent tool split",
+      "pos": [
+        980,
+        290
+      ],
+      "size": [
+        210,
+        84
+      ],
+      "sources": [
+        {
+          "path": "src/agents/pi-embedded-runner/tool-split.ts"
+        }
+      ]
+    },
+    {
+      "id": "config",
+      "type": "database",
+      "label": "Local configuration",
+      "sublabel": "Validated configuration IO",
+      "pos": [
+        50,
+        515
+      ],
+      "size": [
+        210,
+        84
+      ],
+      "sources": [
+        {
+          "path": "src/config/io.ts"
+        }
+      ]
+    },
+    {
+      "id": "plugins",
+      "type": "backend",
+      "label": "Plugin loader",
+      "sublabel": "Discovery and schema checks",
+      "pos": [
+        515,
+        515
+      ],
+      "size": [
+        210,
+        84
+      ],
+      "sources": [
+        {
+          "path": "src/plugins/loader.ts"
+        }
+      ]
+    },
+    {
+      "id": "sessions",
+      "type": "database",
+      "label": "Session history",
+      "sublabel": "History limits and compaction",
+      "pos": [
+        980,
+        515
+      ],
+      "size": [
+        210,
+        84
+      ],
+      "sources": [
+        {
+          "path": "src/agents/pi-embedded-runner/history.ts"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "entry-gateway",
+      "from": "entry",
+      "to": "gateway",
+      "label": "connect"
+    },
+    {
+      "id": "gateway-routing",
+      "from": "gateway",
+      "to": "routing",
+      "label": "resolve"
+    },
+    {
+      "id": "channels-agent",
+      "from": "channels",
+      "to": "agent",
+      "label": "dispatch"
+    },
+    {
+      "id": "agent-tools",
+      "from": "agent",
+      "to": "tools",
+      "label": "invoke"
+    },
+    {
+      "id": "config-plugins",
+      "from": "config",
+      "to": "plugins",
+      "label": "configure"
+    },
+    {
+      "id": "agent-sessions",
+      "from": "agent",
+      "to": "sessions",
+      "label": "retain"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Source snapshot",
+      "items": [
+        "Committed source and caller review",
+        "Pinned Git revision; implementation evidence"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Evidence boundary",
+      "items": [
+        "Runtime and provider health unverified",
+        "Human review and merge remain required"
+      ]
+    }
+  ]
+}
