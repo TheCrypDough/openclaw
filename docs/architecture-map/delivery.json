@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "architecture",
+  "input": ".\\architecture.json",
+  "output": ".\\map.html",
+  "specification": {
+    "sha256": "408b31efed7b85911341c8cca8f4a1c0805bb00d7dd5522bbf7b3ba08f18e650",
+    "bytes": 4873
+  },
+  "artifact": {
+    "sha256": "08f8fad414ed32831ab516d7a30ccf3e34487c359487610aaffc57fd45c69f3d",
+    "bytes": 711089
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  },
+  "evidence": {
+    "verified": true,
+    "repository": "https://github.com/TheCrypDough/openclaw",
+    "revision": "a54dc7fe80fc02e2a02e6901668a468fcb0cf8b4",
+    "references": 10
+  }
+}

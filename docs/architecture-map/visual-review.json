@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "reviewer": "image-capable Codex",
+  "repository": {
+    "url": "https://github.com/TheCrypDough/openclaw",
+    "revision": "a54dc7fe80fc02e2a02e6901668a468fcb0cf8b4"
+  },
+  "artifact": {
+    "path": "map.html",
+    "sha256": "08f8fad414ed32831ab516d7a30ccf3e34487c359487610aaffc57fd45c69f3d",
+    "bytes": 711089
+  },
+  "specification": {
+    "path": "architecture.json",
+    "sha256": "408b31efed7b85911341c8cca8f4a1c0805bb00d7dd5522bbf7b3ba08f18e650",
+    "bytes": 4873
+  },
+  "delivery_receipt": {
+    "path": "delivery.json",
+    "sha256": "96d21dc9197688f826f52363c04689fc68e4197b715f946f85ed84abdc01128a",
+    "bytes": 759
+  },
+  "browser_evidence": {
+    "path": "map.visual-check.json",
+    "sha256": "8c9522cf0c8d86ba6e3eccc443742f7e301c209d26f406cd78f66cf878156e18",
+    "bytes": 17134
+  },
+  "source_review": {
+    "path": "SOURCE_REVIEW.md",
+    "sha256": "b8b81027b46e43ee6187f9446b38bbd8238867c5be23dd6121e5acfb8880203a",
+    "bytes": 1391
+  },
+  "review": {
+    "path": "REVIEW.md",
+    "sha256": "fd0fc4bf255d8b5730bcd5bb75e52a3733c6d509fed2e0d4f54423ab76058c45",
+    "bytes": 1010
+  },
+  "screenshots": [
+    {
+      "path": "map.visual-check.1440x900.light.png",
+      "sha256": "c06cc7864f22b96c9d869f8320198279c0b9857bfd52907bd0f1e8aab938c0d6",
+      "bytes": 86139
+    },
+    {
+      "path": "map.visual-check.1440x900.dark.png",
+      "sha256": "eb5051319240195e60d9b9ed2eaf66f342ac16c26fbf222e9a4835aced74838a",
+      "bytes": 87055
+    },
+    {
+      "path": "map.visual-check.2048x1320.light.png",
+      "sha256": "7fbd14edb6a8bd0102d5a86ea0244e6a2212b1afb6cde73f93f0f3c99d49b8f4",
+      "bytes": 118764
+    },
+    {
+      "path": "map.visual-check.2048x1320.dark.png",
+      "sha256": "3782f89c611fb923911f5618079d1227297e7cc7a4d8fd6e0495229ffce67181",
+      "bytes": 120237
+    }
+  ],
+  "inspected_screenshot_count": 4,
+  "scope": "Actual original screenshots inspected; deployed app behavior unverified.",
+  "published_receipt_normalization": "Local machine paths replaced with relative/runtime placeholders; source specification, HTML and original PNG bytes unchanged. Receipt hashes rebound after original-evidence verification."
+}
